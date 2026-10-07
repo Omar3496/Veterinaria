@@ -1,4 +1,4 @@
-package com.chauca.Veterinaria;
+package com.tecsolutions.Veterinaria;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
