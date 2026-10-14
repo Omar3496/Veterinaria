@@ -1,12 +1,11 @@
 package com.tecsolutions.Veterinaria.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -22,6 +21,11 @@ public class Mascota {
     private String especie; // Ej: Perro, Gato
     private String raza;
     private int edad;
-    private String nombrePropietario;
-    private String telefono;
+
+    @ManyToOne
+    @JoinColumn(name = "propietario_id")
+    private Propietario propietario;
+
+    @OneToMany(mappedBy = "mascota", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cita> citas;
 }
