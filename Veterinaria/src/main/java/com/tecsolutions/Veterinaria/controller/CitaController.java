@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tecsolutions.Veterinaria.model.Cita;
+import com.tecsolutions.Veterinaria.dto.CitaDTO;
 import com.tecsolutions.Veterinaria.services.CitaService;
 
 @RestController
@@ -24,41 +24,41 @@ public class CitaController {
     private CitaService citaService;
 
     @GetMapping
-    public List<Cita> listarTodas() {
+    public List<CitaDTO> listarTodas() {
         return citaService.listarTodas();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cita> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<CitaDTO> buscarPorId(@PathVariable Long id) {
         return citaService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/mascota/{mascotaId}")
-    public List<Cita> buscarPorMascota(@PathVariable Long mascotaId) {
+    public List<CitaDTO> buscarPorMascota(@PathVariable Long mascotaId) {
         return citaService.buscarPorMascota(mascotaId);
     }
 
     @GetMapping("/veterinario/{veterinarioId}")
-    public List<Cita> buscarPorVeterinario(@PathVariable Long veterinarioId) {
+    public List<CitaDTO> buscarPorVeterinario(@PathVariable Long veterinarioId) {
         return citaService.buscarPorVeterinario(veterinarioId);
     }
 
     @GetMapping("/estado/{estado}")
-    public List<Cita> buscarPorEstado(@PathVariable String estado) {
+    public List<CitaDTO> buscarPorEstado(@PathVariable String estado) {
         return citaService.buscarPorEstado(estado);
     }
 
     @PostMapping
-    public Cita crear(@RequestBody Cita cita) {
-        return citaService.guardar(cita);
+    public CitaDTO crear(@RequestBody CitaDTO citaDTO) {
+        return citaService.guardar(citaDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cita> actualizar(@PathVariable Long id, @RequestBody Cita cita) {
+    public ResponseEntity<CitaDTO> actualizar(@PathVariable Long id, @RequestBody CitaDTO citaDTO) {
         try {
-            return ResponseEntity.ok(citaService.actualizar(id, cita));
+            return ResponseEntity.ok(citaService.actualizar(id, citaDTO));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

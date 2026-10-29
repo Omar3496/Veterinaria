@@ -1,6 +1,6 @@
 package com.tecsolutions.Veterinaria.controller;
 
-import com.tecsolutions.Veterinaria.model.Veterinario;
+import com.tecsolutions.Veterinaria.dto.VeterinarioDTO;
 import com.tecsolutions.Veterinaria.services.VeterinarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,26 +16,26 @@ public class VeterinarioController {
     private VeterinarioService veterinarioService;
 
     @GetMapping
-    public List<Veterinario> listarTodos() {
+    public List<VeterinarioDTO> listarTodos() {
         return veterinarioService.listarTodos();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Veterinario> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<VeterinarioDTO> buscarPorId(@PathVariable Long id) {
         return veterinarioService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Veterinario crear(@RequestBody Veterinario veterinario) {
-        return veterinarioService.guardar(veterinario);
+    public VeterinarioDTO crear(@RequestBody VeterinarioDTO veterinarioDTO) {
+        return veterinarioService.guardar(veterinarioDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Veterinario> actualizar(@PathVariable Long id, @RequestBody Veterinario veterinario) {
+    public ResponseEntity<VeterinarioDTO> actualizar(@PathVariable Long id, @RequestBody VeterinarioDTO veterinarioDTO) {
         try {
-            return ResponseEntity.ok(veterinarioService.actualizar(id, veterinario));
+            return ResponseEntity.ok(veterinarioService.actualizar(id, veterinarioDTO));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

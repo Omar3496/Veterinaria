@@ -1,6 +1,6 @@
 package com.tecsolutions.Veterinaria.controller;
 
-import com.tecsolutions.Veterinaria.model.Mascota;
+import com.tecsolutions.Veterinaria.dto.MascotaDTO;
 import com.tecsolutions.Veterinaria.services.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,36 +16,36 @@ public class MascotaController {
     private MascotaService mascotaService;
 
     @GetMapping
-    public List<Mascota> listarTodas() {
+    public List<MascotaDTO> listarTodas() {
         return mascotaService.listarTodas();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Mascota> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<MascotaDTO> buscarPorId(@PathVariable Long id) {
         return mascotaService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/propietario/{propietarioId}")
-    public List<Mascota> buscarPorPropietario(@PathVariable Long propietarioId) {
+    public List<MascotaDTO> buscarPorPropietario(@PathVariable Long propietarioId) {
         return mascotaService.buscarPorPropietario(propietarioId);
     }
 
     @GetMapping("/especie/{especie}")
-    public List<Mascota> buscarPorEspecie(@PathVariable String especie) {
+    public List<MascotaDTO> buscarPorEspecie(@PathVariable String especie) {
         return mascotaService.buscarPorEspecie(especie);
     }
 
     @PostMapping
-    public Mascota crear(@RequestBody Mascota mascota) {
-        return mascotaService.guardar(mascota);
+    public MascotaDTO crear(@RequestBody MascotaDTO mascotaDTO) {
+        return mascotaService.guardar(mascotaDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Mascota> actualizar(@PathVariable Long id, @RequestBody Mascota mascota) {
+    public ResponseEntity<MascotaDTO> actualizar(@PathVariable Long id, @RequestBody MascotaDTO mascotaDTO) {
         try {
-            return ResponseEntity.ok(mascotaService.actualizar(id, mascota));
+            return ResponseEntity.ok(mascotaService.actualizar(id, mascotaDTO));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

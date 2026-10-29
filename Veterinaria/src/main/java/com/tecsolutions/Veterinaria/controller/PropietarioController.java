@@ -1,6 +1,6 @@
 package com.tecsolutions.Veterinaria.controller;
 
-import com.tecsolutions.Veterinaria.model.Propietario;
+import com.tecsolutions.Veterinaria.dto.PropietarioDTO;
 import com.tecsolutions.Veterinaria.services.PropietarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,26 +16,26 @@ public class PropietarioController {
     private PropietarioService propietarioService;
 
     @GetMapping
-    public List<Propietario> listarTodos() {
+    public List<PropietarioDTO> listarTodos() {
         return propietarioService.listarTodos();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Propietario> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<PropietarioDTO> buscarPorId(@PathVariable Long id) {
         return propietarioService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Propietario crear(@RequestBody Propietario propietario) {
-        return propietarioService.guardar(propietario);
+    public PropietarioDTO crear(@RequestBody PropietarioDTO propietarioDTO) {
+        return propietarioService.guardar(propietarioDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Propietario> actualizar(@PathVariable Long id, @RequestBody Propietario propietario) {
+    public ResponseEntity<PropietarioDTO> actualizar(@PathVariable Long id, @RequestBody PropietarioDTO propietarioDTO) {
         try {
-            return ResponseEntity.ok(propietarioService.actualizar(id, propietario));
+            return ResponseEntity.ok(propietarioService.actualizar(id, propietarioDTO));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
