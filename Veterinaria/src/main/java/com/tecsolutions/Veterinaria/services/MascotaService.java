@@ -1,16 +1,17 @@
 package com.tecsolutions.Veterinaria.services;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.tecsolutions.Veterinaria.dto.MascotaDTO;
 import com.tecsolutions.Veterinaria.model.Mascota;
 import com.tecsolutions.Veterinaria.model.Propietario;
 import com.tecsolutions.Veterinaria.repository.MascotaRepository;
 import com.tecsolutions.Veterinaria.repository.PropietarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class MascotaService {
@@ -62,7 +63,8 @@ public class MascotaService {
 
             if (mascotaDTO.getPropietarioId() != null) {
                 Propietario propietario = propietarioRepository.findById(mascotaDTO.getPropietarioId())
-                        .orElseThrow(() -> new RuntimeException("Propietario no encontrado con id: " + mascotaDTO.getPropietarioId()));
+                        .orElseThrow(() -> new RuntimeException(
+                                "Propietario no encontrado con id: " + mascotaDTO.getPropietarioId()));
                 mascota.setPropietario(propietario);
             } else {
                 mascota.setPropietario(null);
@@ -92,8 +94,7 @@ public class MascotaService {
                 mascota.getRaza(),
                 mascota.getEdad(),
                 propietarioId,
-                propietarioNombre
-        );
+                propietarioNombre);
     }
 
     private Mascota convertirAEntidad(MascotaDTO dto) {
@@ -105,7 +106,8 @@ public class MascotaService {
 
         if (dto.getPropietarioId() != null) {
             Propietario propietario = propietarioRepository.findById(dto.getPropietarioId())
-                    .orElseThrow(() -> new RuntimeException("Propietario no encontrado con id: " + dto.getPropietarioId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Propietario no encontrado con id: " + dto.getPropietarioId()));
             mascota.setPropietario(propietario);
         }
 
