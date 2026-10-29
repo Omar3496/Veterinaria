@@ -1,45 +1,51 @@
 package com.tecsolutions.Veterinaria.services;
 
+import com.tecsolutions.Veterinaria.model.Mascota;
+import com.tecsolutions.Veterinaria.repository.MascotaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MascotaService {
 
-    public String verificarMascota(String nombre) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            return "Por favor, ingresa el nombre de un producto.";
-        }
+    @Autowired
+    private MascotaRepository mascotaRepository;
 
-        // Convertimos a minúsculas para evitar problemas de escritura
-        String busqueda = nombre.toLowerCase().trim();
-
-        if (busqueda.equals("antiparasitario")) {
-            return "El producto Antiparasitario está disponible. Quedan 10 unidades.";
-        } else if (busqueda.equals("antibiotico")) {
-            return "El producto Antibiótico se encuentra AGOTADO.";
-        } else if (busqueda.equals("vitaminas")) {
-            return "El producto Vitaminas está disponible. Quedan 25 unidades.";
-        } else {
-            return "El producto '" + nombre + "' no está registrado en la veterinaria.";
-        }
+    public List<Mascota> listarTodas() {
+        return mascotaRepository.findAll();
     }
 
-    public String revisarHistorial(String nombre) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            return "Por favor, ingresa el tipo de baño a consultar (normal, medicado, antipulgas).";
-        }
-
-        String tipoBaño = nombre.toLowerCase().trim();
-
-        if (tipoBaño.equals("medicado")) {
-            return "El Baño Medicado está disponible. Incluye shampoo dermatológico especial. Quedan 5 cupos hoy.";
-        } else if (tipoBaño.equals("normal")) {
-            return "El Baño Normal está disponible. Incluye lavado, secado y corte de uñas. Atención inmediata.";
-        } else if (tipoBaño.equals("antipulgas")) {
-            return "El Baño Antipulgas se encuentra AGOTADO por falta de stock del producto antiparasitario.";
-        } else {
-            return "El tipo de servicio '" + nombre + "' no está disponible en nuestro catálogo de baños.";
-        }
+    public Optional<Mascota> buscarPorId(Long id) {
+        return mascotaRepository.findById(id);
     }
 
+    public List<Mascota> buscarPorPropietario(Long propietarioId) {
+        return mascotaRepository.findByPropietarioId(propietarioId);
+    }
+
+    public List<Mascota> buscarPorEspecie(String especie) {
+        return mascotaRepository.findByEspecie(especie);
+    }
+
+    public Mascota guardar(Mascota mascota) {
+        return mascotaRepository.save(mascota);
+    }
+
+    public Mascota actualizar(Long id, Mascota mascotaActualizada) {
+        return mascotaRepository.findById(id).map(mascota -> {
+            mascota.setNombre(mascotaActualizada.getNombre());
+            mascota.setEspecie(mascotaActualizada.getEspecie());
+            mascota.setRaza(mascotaActualizada.getRaza());
+            mascota.setEdad(mascotaActualizada.getEdad());
+            mascota.setPropietario(mascotaActualizada.getPropietario());
+            return mascotaRepository.save(mascota);
+        }).orElseThrow(() -> new RuntimeException("Mascota no encontrada con id: " + id));
+    }
+
+    public void eliminar(Long id) {
+        mascotaRepository.deleteById(id);
+    }
 }

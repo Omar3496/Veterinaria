@@ -1,38 +1,59 @@
 package com.tecsolutions.Veterinaria.controller;
 
+import com.tecsolutions.Veterinaria.model.Mascota;
 import com.tecsolutions.Veterinaria.services.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-public class mascotacontroller {
+@RequestMapping("/api/mascotas")
+public class MascotaController {
 
     @Autowired
     private MascotaService mascotaService;
 
-    // Tu primer endpoint se mantiene igual
-    @GetMapping("/mascota")
-    public Map<String, String> registrarMascota() {
-        Map<String, String> respuesta = new HashMap<>();
-        respuesta.put("estado", "atendido");
-        respuesta.put("mensaje", "tu mascota ha sido registrada");
-        return respuesta;
+    @GetMapping
+    public List<Mascota> listarTodas() {
+        return mascotaService.listarTodas();
     }
 
-    // Endpoint para buscar los productos
-    @GetMapping("/buscar")
-    public String buscarMascota(@RequestParam(name = "nombre") String nombre) {
-        return mascotaService.verificarMascota(nombre);
+    @GetMapping("/{id}")
+    public ResponseEntity<Mascota> buscarPorId(@PathVariable Long id) {
+        return mascotaService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // ¡NUEVO!: Aquí agregamos la ruta que te faltaba para consultar los baños
-    @GetMapping("/consultar")
-    public String consultarMascota(@RequestParam(name = "nombre") String nombre) {
-        return mascotaService.revisarHistorial(nombre);
+    @GetMapping("/propietario/{propietarioId}")
+    public List<Mascota> buscarPorPropietario(@PathVariable Long propietarioId) {
+        return mascotaService.buscarPorPropietario(propietarioId);
+    }
+
+    @GetMapping("/especie/{especie}")
+    public List<Mascota> buscarPorEspecie(@PathVariable String especie) {
+        return mascotaService.buscarPorEspecie(especie);
+    }
+
+    @PostMapping
+    public Mascota crear(@RequestBody Mascota mascota) {
+        return mascotaService.guardar(mascota);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Mascota> actualizar(@PathVariable Long id, @RequestBody Mascota mascota) {
+        try {
+            return ResponseEntity.ok(mascotaService.actualizar(id, mascota));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        mascotaService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }
-
