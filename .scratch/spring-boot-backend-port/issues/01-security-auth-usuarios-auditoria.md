@@ -4,13 +4,13 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] `POST /token` (`application/x-www-form-urlencoded`) authenticates active `Usuario` accounts by `username` or `email` (including looking up a linked `Cliente` email), verifies `BCrypt` passwords, returns `{ "access_token": "<jwt>", "token_type": "bearer" }` with `sub` and `rol` claims, logs a `LOGIN` `Auditoria` record, and enforces a 5 requests/minute per IP rate limit (`HTTP 429`).
-- [ ] Stateless `SecurityFilterChain` validates `Bearer` tokens, rejects inactive users with `HTTP 401`, enforces role permissions with `HTTP 403` (`{ "detail": "No tienes permisos suficientes para realizar esta acción" }`), sets OWASP security headers, and configures CORS.
-- [ ] Global exception handling returns `{ "detail": ... }` payloads for `400`, `401`, `403`, `404`, `409`, `422`, and `429` responses.
-- [ ] Successful `POST`, `PUT`, and `DELETE` requests to `/api/*` by authenticated users are automatically logged in `Auditoria` and returned (most recent 100) at `GET /api/auditoria` for `Administrador` only.
-- [ ] `GET /api/usuarios`, `POST /api/usuarios`, `PUT /api/usuarios/{id}`, and `DELETE /api/usuarios/{id}` allow `Administrador` to manage users in `snake_case` JSON without leaking `hashed_password`, rejecting duplicate usernames and preventing an `Administrador` from deactivating or deleting their own account (`HTTP 400`).
-- [ ] `POST /api/registro-cliente` validates unique `username`, `dni`, and `telefono` and atomically creates a `Usuario` (`Cliente` role) and `Cliente` profile.
-- [ ] `POST /api/recuperar-password` invalidates prior unused tokens for the user, stores only the SHA-256 hash in `PasswordResetToken` with a 30-minute expiry, writes the simulated reset HTML email, and prevents account enumeration; `POST /api/reset-password` validates the token hash, expiry, and unused status, updates the user's `BCrypt` password, and marks the token used.
-- [ ] End-to-end `MockMvc` tests verify authentication, rate limiting, RBAC, audit logging, registration, password reset, and `Usuario` CRUD.
+- [x] `POST /token` (`application/x-www-form-urlencoded`) authenticates active `Usuario` accounts by `username` or `email` (including looking up a linked `Cliente` email), verifies `BCrypt` passwords, returns `{ "access_token": "<jwt>", "token_type": "bearer" }` with `sub` and `rol` claims, logs a `LOGIN` `Auditoria` record, and enforces a 5 requests/minute per IP rate limit (`HTTP 429`).
+- [x] Stateless `SecurityFilterChain` validates `Bearer` tokens, rejects inactive users with `HTTP 401`, enforces role permissions with `HTTP 403` (`{ "detail": "No tienes permisos suficientes para realizar esta acción" }`), sets OWASP security headers, and configures CORS.
+- [x] Global exception handling returns `{ "detail": ... }` payloads for `400`, `401`, `403`, `404`, `409`, `422`, and `429` responses.
+- [x] Successful `POST`, `PUT`, and `DELETE` requests to `/api/*` by authenticated users are automatically logged in `Auditoria` and returned (most recent 100) at `GET /api/auditoria` for `Administrador` only.
+- [x] `GET /api/usuarios`, `POST /api/usuarios`, `PUT /api/usuarios/{id}`, and `DELETE /api/usuarios/{id}` allow `Administrador` to manage users in `snake_case` JSON without leaking `hashed_password`, rejecting duplicate usernames and preventing an `Administrador` from deactivating or deleting their own account (`HTTP 400`).
+- [x] `POST /api/registro-cliente` validates unique `username`, `dni`, and `telefono` and atomically creates a `Usuario` (`Cliente` role) and `Cliente` profile.
+- [x] `POST /api/recuperar-password` invalidates prior unused tokens for the user, stores only the SHA-256 hash in `PasswordResetToken` with a 30-minute expiry, writes the simulated reset HTML email, and prevents account enumeration; `POST /api/reset-password` validates the token hash, expiry, and unused status, updates the user's `BCrypt` password, and marks the token used.
+- [x] End-to-end `MockMvc` tests verify authentication, rate limiting, RBAC, audit logging, registration, password reset, and `Usuario` CRUD.
