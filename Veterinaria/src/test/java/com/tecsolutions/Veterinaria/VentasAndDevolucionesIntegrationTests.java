@@ -794,5 +794,54 @@ public class VentasAndDevolucionesIntegrationTests {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.detail", containsString("entregadas")));
         }
+
+        @Test
+        @DisplayName("Cannot return an already returned sale twice (idempotency guard)")
+        void testCannotReturnSaleTwice() throws Exception {
+            VentaCreateDTO ventaReq = VentaCreateDTO.builder()
+                    .clienteId(clientePrincipal.getId())
+                    .metodoPago("EFECTIVO")
+                    .tipoComprobante("Boleta")
+                    .documentoFiscal("12345678")
+                    .detalles(List.of(new DetalleVentaCreateDTO(prodOk.getId(), 1, 50.0)))
+                    .build();
+
+            MvcResult res = mockMvc.perform(post("/api/ventas")
+                            .header("Authorization", "Bearer " + tokenFor(adminUser))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(ventaReq)))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            long ventaId = objectMapper.readTree(res.getResponse().getContentAsString()).get("id").asLong();
+
+            // Set to Confirmada then Entregada
+            mockMvc.perform(put("/api/ventas/" + ventaId + "/estado?estado=Confirmada")
+                            .header("Authorization", "Bearer " + tokenFor(adminUser)))
+                    .andExpect(status().isOk());
+            mockMvc.perform(put("/api/ventas/" + ventaId + "/estado?estado=Entregada")
+                            .header("Authorization", "Bearer " + tokenFor(adminUser)))
+                    .andExpect(status().isOk());
+
+            DevolucionRequestDTO req = DevolucionRequestDTO.builder()
+                    .tipo("EXTORNO")
+                    .motivo("Defecto de fábrica")
+                    .build();
+
+            // First return succeeds
+            mockMvc.perform(post("/api/ventas/" + ventaId + "/devolver")
+                            .header("Authorization", "Bearer " + tokenFor(adminUser))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(req)))
+                    .andExpect(status().isOk());
+
+            // Second return fails with 400 Bad Request
+            mockMvc.perform(post("/api/ventas/" + ventaId + "/devolver")
+                            .header("Authorization", "Bearer " + tokenFor(adminUser))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(req)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", containsString("ya cuenta con una devolución registrada")));
+        }
     }
 }

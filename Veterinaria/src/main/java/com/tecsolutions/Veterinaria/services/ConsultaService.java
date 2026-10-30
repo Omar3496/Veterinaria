@@ -203,7 +203,7 @@ public class ConsultaService {
         List<Long> consultaIds = consultas.stream().map(Consulta::getId).toList();
 
         List<RecetaMedica> recetas = consultaIds.isEmpty() ? List.of() : recetaMedicaRepository.findByConsultaIdInOrderByFechaDesc(consultaIds);
-        List<OrdenExamen> examenes = ordenExamenRepository.findByConsultaMascotaIdOrderByFechaDesc(mascotaId);
+        List<OrdenExamen> examenes = obtenerExamenesDeMascota(mascotaId);
         List<ReferenciaMedica> referencias = consultaIds.isEmpty() ? List.of() : referenciaMedicaRepository.findByConsultaIdInOrderByFechaDesc(consultaIds);
 
         List<VacunaDTO> vacunasDTO = vacunas.stream().map(vacunaMapper::toDTO).toList();
@@ -237,9 +237,35 @@ public class ConsultaService {
     @Transactional(readOnly = true)
     public List<OrdenExamenDTO> listarExamenesMascota(Long mascotaId, String currentUsername, String currentRole) {
         verificarMascotaCliente(mascotaId, currentUsername, currentRole);
-        return ordenExamenRepository.findByConsultaMascotaIdOrderByFechaDesc(mascotaId).stream()
+        return obtenerExamenesDeMascota(mascotaId).stream()
                 .map(ordenExamenMapper::toDTO)
                 .toList();
+    }
+
+    private List<OrdenExamen> obtenerExamenesDeMascota(Long mascotaId) {
+        List<OrdenExamen> list1 = ordenExamenRepository.findByConsultaMascotaIdOrderByFechaDesc(mascotaId);
+        List<OrdenExamen> list2 = ordenExamenRepository.findByCitaMascotaIdIn(List.of(mascotaId));
+        if (list2.isEmpty()) {
+            return list1;
+        }
+        if (list1.isEmpty()) {
+            return list2;
+        }
+        Map<Long, OrdenExamen> unique = new LinkedHashMap<>();
+        for (OrdenExamen o : list1) {
+            unique.put(o.getId(), o);
+        }
+        for (OrdenExamen o : list2) {
+            unique.putIfAbsent(o.getId(), o);
+        }
+        List<OrdenExamen> result = new ArrayList<>(unique.values());
+        result.sort((a, b) -> {
+            if (a.getFecha() == null && b.getFecha() == null) return 0;
+            if (a.getFecha() == null) return 1;
+            if (b.getFecha() == null) return -1;
+            return b.getFecha().compareTo(a.getFecha());
+        });
+        return result;
     }
 
     @Transactional(readOnly = true)

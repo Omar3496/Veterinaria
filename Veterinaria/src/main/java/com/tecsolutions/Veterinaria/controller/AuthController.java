@@ -28,14 +28,6 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @PostMapping(value = "/token", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TokenDTO> loginJson(@RequestBody Map<String, String> body) {
-        String username = body != null ? body.get("username") : null;
-        String password = body != null ? body.get("password") : null;
-        TokenDTO token = authService.login(username, password);
-        return ResponseEntity.ok(token);
-    }
-
     @PostMapping("/api/registro-cliente")
     public ResponseEntity<Map<String, String>> registrarCliente(@RequestBody RegistroClienteRequestDTO request) {
         Map<String, String> response = authService.registrarCliente(request);

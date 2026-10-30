@@ -372,6 +372,10 @@ public class VentaService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Solo se pueden devolver compras ya entregadas");
         }
 
+        if (devolucionRepository.existsByVentaId(venta.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta venta ya cuenta con una devolución registrada");
+        }
+
         if (req.getTipo() == null || (!"EXTORNO".equalsIgnoreCase(req.getTipo()) && !"NOTA_CREDITO".equalsIgnoreCase(req.getTipo()))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de devolución inválido (EXTORNO o NOTA_CREDITO)");
         }

@@ -21,6 +21,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private static final int MAX_REQUESTS_PER_MINUTE = 5;
     private static final long ONE_MINUTE_MS = 60_000L;
 
+    // shortcut: In-memory sliding window rate limiter per JVM node, replace with distributed Redis token bucket when clustering
     private final Map<String, List<Long>> requestLog = new ConcurrentHashMap<>();
 
     @Override
