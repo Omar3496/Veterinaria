@@ -13,11 +13,25 @@ export default defineConfig({
     port: 5173, // Opcional, puedes mantener tu puerto
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8081',
         changeOrigin: true
       },
       '/token': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8081',
+        changeOrigin: true
+      }
+    }
+  },
+  preview: {
+    host: true,
+    port: 4173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8081',
+        changeOrigin: true
+      },
+      '/token': {
+        target: 'http://localhost:8081',
         changeOrigin: true
       }
     }
