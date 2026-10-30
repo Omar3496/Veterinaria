@@ -59,7 +59,7 @@ The quantity breakdown of a `Producto` across warehouse states (`Disponible`, `N
 _Avoid_: Inventario por estado, Existencia
 
 **MovimientoStock**:
-An immutable kardex ledger entry recording every stock quantity or warehouse-state change (`INGRESO`, `VENTA`, `AJUSTE`, `CAMBIO_ALMACEN`, `DEVOLUCION`, `ANULACION_VENTA`).
+An immutable kardex ledger entry recording every stock quantity or warehouse-state change (`INGRESO`, `ANULACION_INGRESO`, `VENTA`, `AJUSTE`, `CAMBIO_ALMACEN`, `DEVOLUCION`, `ANULACION_VENTA`).
 _Avoid_: Kardex, Historial de inventario, Transacción de stock
 
 **Ingreso**:

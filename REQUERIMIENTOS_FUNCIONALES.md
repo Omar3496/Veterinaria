@@ -91,9 +91,9 @@ El sistema implementa Control de Acceso Basado en Roles (**RBAC**) con los sigui
   El sistema debe gestionar el desglose de inventario por estados de almacén (`Disponible`, `No disponible`, `Dañado`, `Vencido`), permitiendo a `Administrador` y `Recepcionista`:
   1. Ajustar stock manualmente sumando o restando unidades (`PUT /api/productos/{id}/stock`).
   2. Cambiar el estado de almacén de un producto (`PUT /api/productos/{id}/estado-almacen`) o transferir cantidades parciales entre almacenes (`POST /api/almacenes/mover`).
-  3. Registrar automáticamente cada operación en el historial de movimientos (`GET /api/movimientos-stock`) con fecha, usuario, tipo (`INGRESO`, `VENTA`, `AJUSTE`, `CAMBIO_ALMACEN`, `DEVOLUCION`, `ANULACION_VENTA`), cantidades y referencia.
-* **RF-19 — Registro de Ingresos de Mercadería (Compras a Proveedores):**
-  El sistema debe permitir a `Administrador` y `Recepcionista` registrar compras/ingresos de mercadería (`GET/POST /api/ingresos`) indicando proveedor, modalidad de pago, tipo/serie/número de comprobante y el detalle de productos. El sistema validará que las fechas de vencimiento no sean pasadas, incrementará el stock del almacén `Disponible`, actualizará precios de compra/venta y registrará los movimientos de tipo `INGRESO`.
+  3. Registrar automáticamente cada operación en el historial de movimientos (`GET /api/movimientos-stock`) con fecha, usuario, tipo (`INGRESO`, `ANULACION_INGRESO`, `VENTA`, `AJUSTE`, `CAMBIO_ALMACEN`, `DEVOLUCION`, `ANULACION_VENTA`), cantidades y referencia.
+* **RF-19 — Registro y Anulación de Ingresos de Mercadería (Compras a Proveedores):**
+  El sistema debe permitir a `Administrador` y `Recepcionista` registrar compras/ingresos de mercadería (`GET/POST /api/ingresos`) indicando proveedor, modalidad de pago, tipo/serie/número de comprobante y el detalle de productos. El sistema validará que las fechas de vencimiento no sean pasadas, incrementará el stock del almacén `Disponible`, actualizará precios de compra/venta y registrará los movimientos de tipo `INGRESO`. Asimismo, el `Administrador` podrá eliminar/anular un ingreso (`DELETE /api/ingresos/{id}`), revirtiendo las cantidades ingresadas del stock `Disponible` y registrando los movimientos de tipo `ANULACION_INGRESO`.
 
 ---
 
