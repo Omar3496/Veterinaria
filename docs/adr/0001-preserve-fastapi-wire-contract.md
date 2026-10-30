@@ -1,0 +1,3 @@
+# Preserve FastAPI Wire Contract in Spring Boot
+
+The finished React frontend (`./frontend`) was built against a Python/FastAPI backend and expects `snake_case` JSON payloads, `application/x-www-form-urlencoded` login at `POST /token` returning `{ "access_token": "<jwt>" }` with `sub` and `rol` claims, and `{ "detail": "<message>" }` error bodies. Rather than refactoring the frontend or breaking Java naming conventions, the Spring Boot backend (`./Veterinaria`) keeps idiomatic `camelCase` in Java and configures `spring.jackson.property-naming-strategy=SNAKE_CASE`, a zero-extra-dependency JDK `HmacSHA256` + `BCryptPasswordEncoder` filter in `spring-boot-starter-security` for `/token` and `Bearer` auth, and a `@RestControllerAdvice` returning `{ "detail": ... }`.

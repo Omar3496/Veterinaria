@@ -7,6 +7,7 @@ How the engineering skills should consume this repo's domain documentation when 
 - **`GLOSSARY.md`** at the repo root, or
 - **`GLOSSARY-MAP.md`** at the repo root if it exists: it points at one `GLOSSARY.md` per context. Read each one relevant to the topic.
 - **`docs/adr/`**: read ADRs that touch the area you're about to work in. In multi-context repos, also check `src/<context>/docs/adr/` for context-scoped decisions.
+- **`REQUERIMIENTOS_FUNCIONALES.md`** (`RF-01..RF-27`) and **`REQUERIMIENTOS_NO_FUNCIONALES.md`** (`RNF-01..RNF-17`) at the repo root: read the sections touching the module or quality attribute you are working on.
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
 
@@ -17,10 +18,12 @@ Single-context repo (most repos):
 ```
 /
 ├── GLOSSARY.md
+├── REQUERIMIENTOS_FUNCIONALES.md
+├── REQUERIMIENTOS_NO_FUNCIONALES.md
 ├── docs/adr/
-│   ├── 0001-event-sourced-orders.md
-│   └── 0002-postgres-for-write-model.md
-└── src/
+│   └── 0001-preserve-fastapi-wire-contract.md
+├── Veterinaria/
+└── frontend/
 ```
 
 Multi-context repo (presence of `GLOSSARY-MAP.md` at the root):
@@ -49,3 +52,7 @@ If the concept you need isn't in the glossary yet, that's a signal: either you'r
 If your output contradicts an existing ADR, surface it explicitly rather than silently overriding:
 
 > _Contradicts ADR-0007 (event-sourced orders), but worth reopening because…_
+
+## Keep requirements in sync
+
+Whenever a session (`/grill-with-docs`, `/domain-modeling`, `/to-spec`, `/implement`, or direct edits) changes a functional rule (`RF-01..RF-27`) or a non-functional/architectural decision (`RNF-01..RNF-17`), update `REQUERIMIENTOS_FUNCIONALES.md` or `REQUERIMIENTOS_NO_FUNCIONALES.md` inline in the same turn alongside `GLOSSARY.md` and `docs/adr/`.
