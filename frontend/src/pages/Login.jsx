@@ -47,7 +47,8 @@ export default function Login() {
       }
     } catch (err) {
       console.error('Login error', err)
-      setError('Credenciales incorrectas o acceso denegado.')
+      const detail = err.response?.data?.detail
+      setError(detail || 'Credenciales incorrectas o acceso denegado.')
     } finally {
       setLoading(false)
     }
@@ -66,7 +67,8 @@ export default function Login() {
         setForgotMsg(data.detail || 'Si el correo está registrado, recibirás un enlace.')
       }
     } catch (err) {
-      setForgotMsg('Error al procesar la solicitud.')
+      const detail = err.response?.data?.detail
+      setForgotMsg(detail || 'Error al procesar la solicitud.')
     } finally {
       setForgotLoading(false)
     }

@@ -17,12 +17,10 @@ api.interceptors.response.use(
   response => response,
   error => {
     if (error.response && error.response.status === 401) {
-      const isLoginRequest = error.config && error.config.url && error.config.url.includes('/token')
+      const url = error.config?.url || ''
+      const isLoginRequest = /(^|\/)token\/?(\?.*)?$/.test(url)
       if (!isLoginRequest) {
         useAuthStore.getState().logout()
-        if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-          window.location.href = '/login'
-        }
       }
     }
     return Promise.reject(error)
