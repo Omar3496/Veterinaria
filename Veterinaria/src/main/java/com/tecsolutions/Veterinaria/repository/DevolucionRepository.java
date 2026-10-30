@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface DevolucionRepository extends JpaRepository<Devolucion, Long> {
     List<Devolucion> findAllByOrderByFechaDesc(Pageable pageable);
+    boolean existsByVentaId(Long ventaId);
 }

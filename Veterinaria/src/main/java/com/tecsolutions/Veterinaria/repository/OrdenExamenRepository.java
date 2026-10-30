@@ -6,11 +6,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrdenExamenRepository extends JpaRepository<OrdenExamen, Long> {
     List<OrdenExamen> findByConsultaMascotaIdOrderByFechaDesc(Long mascotaId);
     List<OrdenExamen> findByConsultaIdIn(Collection<Long> consultaIds);
     List<OrdenExamen> findByCitaMascotaIdIn(Collection<Long> mascotaIds);
+    Optional<OrdenExamen> findByCitaId(Long citaId);
     boolean existsByExamenAuxiliarId(Long examenAuxiliarId);
 }

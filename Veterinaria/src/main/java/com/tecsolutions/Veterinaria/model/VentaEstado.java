@@ -32,6 +32,13 @@ public enum VentaEstado {
                 return estado;
             }
         }
+        String normalized = trimmed.replace("ó", "o").replace("Ó", "O");
+        for (VentaEstado estado : VentaEstado.values()) {
+            String estadoNorm = estado.value.replace("ó", "o").replace("Ó", "O");
+            if (estadoNorm.equalsIgnoreCase(normalized)) {
+                return estado;
+            }
+        }
         throw new IllegalArgumentException("Estado de venta inválido: " + text);
     }
 }

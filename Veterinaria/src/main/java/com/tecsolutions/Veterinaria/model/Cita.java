@@ -51,7 +51,7 @@ public class Cita {
     @EqualsAndHashCode.Exclude
     private ExamenAuxiliar examenAuxiliar;
 
-    @OneToOne(mappedBy = "cita")
+    @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private OrdenExamen ordenExamen;
