@@ -4,13 +4,13 @@
 
 **Blocked by:** 01: Security, JWT Authentication, Usuario CRUD, Password Reset & Auditoria, 02: Cliente & Mascota Management and Portal Profile
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] `GET /api/configuracion/horarios` and `PUT /api/configuracion/horarios` read and persist working days (`1..7`), `hora_inicio`, `hora_fin`, and `duracion_min` (`15`, `30`, or `60`) in `Configuracion`.
-- [ ] `GET /api/citas/disponibilidad` computes available time slots for a `fecha` and optional `veterinario_id`, marking past slots and booked non-cancelled slots unavailable.
-- [ ] `GET /api/examenes-auxiliares`, `POST /api/examenes-auxiliares`, `PUT /api/examenes-auxiliares/{id}`, and `DELETE /api/examenes-auxiliares/{id}` manage the exam catalog, soft-deactivating (`activo = false`) any exam referenced by an `OrdenExamen` when deleted.
-- [ ] `POST /api/citas` validates `Cliente` pet ownership (`HTTP 403`), validates active `ExamenAuxiliar` when `tipo` is `"Examen auxiliar"`, rejects overlapping appointments within `duracion_min` (`HTTP 409`), sets initial status (`Pendiente` for `Cliente`, `Programada` for staff), and creates a `PENDIENTE` `OrdenExamen` when `tipo` is `"Examen auxiliar"`.
-- [ ] `GET /api/citas`, `GET /api/citas/mias` (returning `CitaConMascota` with `mascota_nombre`, `veterinario_nombre`, `examen_auxiliar_nombre`), `PUT /api/citas/{id}/reprogramar`, `PUT /api/citas/{id}/cancelar`, `PUT /api/citas/{id}/estado`, and `DELETE /api/citas/{id}` enforce role permissions, conflict checks, and mandatory `motivo_cancelacion` when cancelling.
-- [ ] `GET /api/configuracion/pago` and `PUT /api/configuracion/pago` manage appointment pricing and enabled payment methods (`YAPE`, `PLIN`, `TARJETA`, `EFECTIVO`).
-- [ ] `POST /api/citas/{id}/pagos`, `POST /api/pagos/{id}/procesar`, and `GET /api/pagos/mios` calculate the service or exam tariff when `monto` is omitted, validate payment methods and ownership, transition `Pendiente` appointments to `Programada` on completion, and assign correlative `BA64`/`FA64` receipt numbers (`comprobante`) via `ComprobanteSeq`.
-- [ ] End-to-end `MockMvc` tests verify schedule configuration, slot availability, exam catalog soft-delete, appointment conflict detection, rescheduling, cancellation, and payment receipt generation.
+- [x] `GET /api/configuracion/horarios` and `PUT /api/configuracion/horarios` read and persist working days (`1..7`), `hora_inicio`, `hora_fin`, and `duracion_min` (`15`, `30`, or `60`) in `Configuracion`.
+- [x] `GET /api/citas/disponibilidad` computes available time slots for a `fecha` and optional `veterinario_id`, marking past slots and booked non-cancelled slots unavailable.
+- [x] `GET /api/examenes-auxiliares`, `POST /api/examenes-auxiliares`, `PUT /api/examenes-auxiliares/{id}`, and `DELETE /api/examenes-auxiliares/{id}` manage the exam catalog, soft-deactivating (`activo = false`) any exam referenced by an `OrdenExamen` when deleted.
+- [x] `POST /api/citas` validates `Cliente` pet ownership (`HTTP 403`), validates active `ExamenAuxiliar` when `tipo` is `"Examen auxiliar"`, rejects overlapping appointments within `duracion_min` (`HTTP 409`), sets initial status (`Pendiente` for `Cliente`, `Programada` for staff), and creates a `PENDIENTE` `OrdenExamen` when `tipo` is `"Examen auxiliar"`.
+- [x] `GET /api/citas`, `GET /api/citas/mias` (returning `CitaConMascota` with `mascota_nombre`, `veterinario_nombre`, `examen_auxiliar_nombre`), `PUT /api/citas/{id}/reprogramar`, `PUT /api/citas/{id}/cancelar`, `PUT /api/citas/{id}/estado`, and `DELETE /api/citas/{id}` enforce role permissions, conflict checks, and mandatory `motivo_cancelacion` when cancelling.
+- [x] `GET /api/configuracion/pago` and `PUT /api/configuracion/pago` manage appointment pricing and enabled payment methods (`YAPE`, `PLIN`, `TARJETA`, `EFECTIVO`).
+- [x] `POST /api/citas/{id}/pagos`, `POST /api/pagos/{id}/procesar`, and `GET /api/pagos/mios` calculate the service or exam tariff when `monto` is omitted, validate payment methods and ownership, transition `Pendiente` appointments to `Programada` on completion, and assign correlative `BA64`/`FA64` receipt numbers (`comprobante`) via `ComprobanteSeq`.
+- [x] End-to-end `MockMvc` tests verify schedule configuration, slot availability, exam catalog soft-delete, appointment conflict detection, rescheduling, cancellation, and payment receipt generation.
