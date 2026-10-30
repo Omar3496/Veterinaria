@@ -61,7 +61,7 @@ El sistema implementa Control de Acceso Basado en Roles (**RBAC**) con los sigui
 * **RF-10 — Reprogramación, Cambio de Estado y Cancelación de Citas:**
   El sistema debe permitir reprogramar la fecha/hora de una cita no cancelada (`PUT /api/citas/{id}/reprogramar`) validando disponibilidad, así como actualizar su estado (`PUT /api/citas/{id}/estado`, `PUT /api/citas/{id}/cancelar`). Para pasar una cita a estado `Cancelada`, el sistema debe exigir obligatoriamente el registro del `motivo_cancelacion`. La eliminación física de citas (`DELETE /api/citas/{id}`) solo está permitida para `Administrador` y `Veterinario`.
 * **RF-11 — Tarifario y Pago de Citas con Emisión de Comprobante:**
-  El sistema debe permitir al `Administrador` configurar los costos por tipo de cita y métodos de pago habilitados (`GET/PUT /api/configuracion/pago`). Los clientes o administradores podrán registrar y procesar pagos de citas (`POST /api/citas/{id}/pagos`, `POST /api/pagos/{id}/procesar`) mediante *YAPE*, *PLIN*, *TARJETA* o *EFECTIVO*. Al completarse el pago, la cita pasa automáticamente de `Pendiente` a `Programada` y se genera el comprobante electrónico correlativo (`BA64` para Boleta o `FA64` para Factura).
+  El sistema debe permitir al `Administrador` configurar los costos por tipo de cita y métodos de pago habilitados (`GET/PUT /api/configuracion/pago`). Los clientes o administradores podrán registrar y procesar pagos de citas (`POST /api/citas/{id}/pagos`, `POST /api/pagos/{id}/procesar`) mediante *YAPE*, *PLIN*, *TARJETA* o *EFECTIVO*. Para clientes, la tarifa a pagar se calculará de forma autoritativa en el backend desde la configuración. Al completarse el pago, la cita pasa automáticamente de `Pendiente` a `Programada` y se genera el comprobante electrónico correlativo (`BA64` para Boleta o `FA64` para Factura) mediante bloqueo pesimista en la secuencia (`ComprobanteService`). Si un pago ya se encuentra en estado `COMPLETADO`, el sistema rechazará reintentos de procesamiento (`400 Bad Request`) protegiendo la correlatividad fiscal.
 
 ---
 
@@ -77,7 +77,7 @@ El sistema implementa Control de Acceso Basado en Roles (**RBAC**) con los sigui
 * **RF-14 — Visualización Integral del Historial Clínico:**
   El sistema debe consolidar y mostrar el historial médico completo de cada mascota (`GET /api/mascotas/{id}/historial`), incluyendo consultas, vacunas aplicadas, recetas emitidas, órdenes/resultados de exámenes auxiliares y referencias médicas, restringiendo a los usuarios con rol `Cliente` únicamente a la lectura de sus propias mascotas.
 * **RF-15 — Registro de Vacunación y Alertas de Próximas Dosis:**
-  El sistema debe permitir al `Veterinario` y `Administrador` registrar vacunas aplicadas (`POST /api/mascotas/{id}/vacunas`), calculando automáticamente la fecha de `proxima_dosis` si se indica un `intervalo_dias`, y descontando 1 unidad del stock del almacén `Disponible` si se vincula un producto del inventario. Asimismo, el sistema debe generar alertas automáticas de vacunas próximas a vencer en los siguientes **15 días** (`GET /api/recordatorios`).
+  El sistema debe permitir al `Veterinario` y `Administrador` registrar vacunas aplicadas (`POST /api/mascotas/{id}/vacunas`), calculando automáticamente la fecha de `proxima_dosis` si se indica un `intervalo_dias`, descontando 1 unidad del stock del almacén `Disponible` si se vincula un producto del inventario y registrando el movimiento correspondiente de tipo `VACUNA` en el Kardex. Asimismo, el sistema debe generar alertas automáticas de vacunas próximas a vencer en los siguientes **15 días** (`GET /api/recordatorios`).
 
 ---
 
@@ -91,7 +91,7 @@ El sistema implementa Control de Acceso Basado en Roles (**RBAC**) con los sigui
   El sistema debe gestionar el desglose de inventario por estados de almacén (`Disponible`, `No disponible`, `Dañado`, `Vencido`), permitiendo a `Administrador` y `Recepcionista`:
   1. Ajustar stock manualmente sumando o restando unidades (`PUT /api/productos/{id}/stock`).
   2. Cambiar el estado de almacén de un producto (`PUT /api/productos/{id}/estado-almacen`) o transferir cantidades parciales entre almacenes (`POST /api/almacenes/mover`).
-  3. Registrar automáticamente cada operación en el historial de movimientos (`GET /api/movimientos-stock`) con fecha, usuario, tipo (`INGRESO`, `ANULACION_INGRESO`, `VENTA`, `AJUSTE`, `CAMBIO_ALMACEN`, `DEVOLUCION`, `ANULACION_VENTA`), cantidades y referencia.
+  3. Registrar automáticamente cada operación en el historial de movimientos (`GET /api/movimientos-stock`) con fecha, usuario, tipo (`INGRESO`, `ANULACION_INGRESO`, `VENTA`, `AJUSTE`, `CAMBIO_ALMACEN`, `DEVOLUCION`, `ANULACION_VENTA`, `VACUNA`), cantidades y referencia.
 * **RF-19 — Registro y Anulación de Ingresos de Mercadería (Compras a Proveedores):**
   El sistema debe permitir a `Administrador` y `Recepcionista` registrar compras/ingresos de mercadería (`GET/POST /api/ingresos`) indicando proveedor, modalidad de pago, tipo/serie/número de comprobante y el detalle de productos. El sistema validará que las fechas de vencimiento no sean pasadas, incrementará el stock del almacén `Disponible`, actualizará precios de compra/venta y registrará los movimientos de tipo `INGRESO`. Asimismo, el `Administrador` podrá eliminar/anular un ingreso (`DELETE /api/ingresos/{id}`), revirtiendo las cantidades ingresadas del stock `Disponible` y registrando los movimientos de tipo `ANULACION_INGRESO`.
 
@@ -102,21 +102,22 @@ El sistema implementa Control de Acceso Basado en Roles (**RBAC**) con los sigui
 * **RF-20 — Registro de Ventas, Validación Atómica de Stock y Facturación:**
   El sistema debe permitir a `Administrador`, `Recepcionista` y `Cliente` registrar ventas (`POST /api/ventas`) cumpliendo las siguientes reglas de negocio:
   1. Verificar que cada producto tenga stock suficiente en el almacén `Disponible`, se encuentre en estado `Disponible` y no esté vencido.
-  2. Validar el documento fiscal según el comprobante: **DNI (8 dígitos)** o **Carnet de Extranjería (12 dígitos iniciando en 20)** para **Boleta** (serie `BA64`), y **RUC (11 dígitos)** para **Factura** (serie `FA64`).
-  3. Descontar de forma atómica el stock, generar un código único de recojo en tienda (`SRB-XXXXXX`), asignar numeración correlativa de comprobante y registrar los movimientos de salida (`VENTA`).
+  2. Aplicar de forma autoritativa en el backend los precios vigentes del catálogo (`Producto.precio`) cuando la solicitud es emitida por un `Cliente`. Para el personal en POS, se permite ajuste de precio unitario siempre que sea estrictamente positivo (`> 0`).
+  3. Validar el documento fiscal según el comprobante: **DNI (8 dígitos)** o **Carnet de Extranjería (12 dígitos iniciando en 20)** para **Boleta** (serie `BA64`), y **RUC (11 dígitos)** para **Factura** (serie `FA64`).
+  4. Descontar de forma atómica el stock, generar un código único de recojo en tienda (`SRB-XXXXXX`), asignar numeración correlativa de comprobante con bloqueo pesimista (`ComprobanteService`) y registrar los movimientos de salida (`VENTA`).
 * **RF-21 — Gestión de Estados de Venta y Solicitud de Anulación:**
   El sistema debe controlar el flujo de estados de una venta (`Pendiente`, `Confirmada`, `Entregada`, `Anulación solicitada`, `Cancelada`):
   1. El `Cliente` puede solicitar la anulación de su compra (`POST /api/ventas/{id}/solicitar-anulacion`) siempre que aún no haya sido entregada.
   2. El personal (`Administrador`, `Recepcionista`) puede confirmar, marcar como entregada o cancelar la venta (`PUT /api/ventas/{id}/estado`). Al pasar a `Cancelada`, el sistema revierte automáticamente el stock al almacén `Disponible`.
 * **RF-22 — Devoluciones Post-Entrega y Notas de Crédito:**
-  El sistema debe permitir a `Administrador` y `Recepcionista` procesar devoluciones sobre ventas en estado `Entregada` (`POST /api/ventas/{id}/devolver`), revirtiendo el stock al almacén `Disponible` y eligiendo entre **Extorno** o emisión de **Nota de Crédito** (`NC-XXXXXX`, vigente por 180 días). Las Notas de Crédito activas con saldo disponible (`GET /api/notas-credito`) podrán ser aplicadas como descuento total o parcial en nuevas compras.
+  El sistema debe permitir a `Administrador` y `Recepcionista` procesar devoluciones sobre ventas en estado `Entregada` (`POST /api/ventas/{id}/devolver`), revirtiendo el stock al almacén `Disponible` y eligiendo entre **Extorno** o emisión de **Nota de Crédito** (`NC-XXXXXX`, vigente por 180 días). El monto a devolver estará estrictamente limitado al total monetario efectivamente pagado en la venta (`venta.total`), rechazando montos negativos o superiores. Las Notas de Crédito activas con saldo disponible (`GET /api/notas-credito`) podrán ser aplicadas como descuento total o parcial en nuevas compras.
 
 ---
 
 ### 🌐 Módulo 8: Portal del Cliente y Canales Públicos
 
 * **RF-23 — Portal de Autogestión del Cliente:**
-  El sistema debe ofrecer un portal exclusivo para el rol `Cliente` (`/portal`) donde pueda gestionar su perfil, visualizar sus mascotas y su historial clínico completo, consultar sus recetas, órdenes de exámenes y referencias (`GET /api/ordenes-medicas/mias`), agendar/reprogramar/cancelar y pagar citas, revisar sus recordatorios de vacunación y consultar el estado de sus compras, pagos y notas de crédito.
+  El sistema debe ofrecer un portal exclusivo para el rol `Cliente` (`/portal`) donde pueda gestionar su perfil, visualizar sus mascotas y su historial clínico completo, consultar sus recetas, órdenes de exámenes y referencias (`GET /api/ordenes-medicas/mias`), agendar/reprogramar/cancelar y pagar citas (mediante pasarela/modal integrado), revisar sus recordatorios de vacunación y consultar el estado de sus compras, pagos y notas de crédito. El frontend redirigirá automáticamente a los clientes que intenten acceder a rutas exclusivas del personal hacia `/portal`, y al personal que intente acceder a `/portal` hacia `/dashboard`.
 * **RF-24 — Sitio Web Público, Blog y Catálogo de Tienda:**
   El sistema debe disponer de vistas públicas accesibles sin autenticación para la página institucional (`/`), el Blog informativo de cuidado animal (`/blog`, `/blog/:slug`) y el catálogo de productos de la Tienda (`/tienda`).
 
