@@ -4,12 +4,12 @@
 
 **Blocked by:** 01: Security, JWT Authentication, Usuario CRUD, Password Reset & Auditoria
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] `GET /api/clientes` (with `skip` and `limit` pagination) and `POST /api/clientes` allow `Administrador`, `Veterinario`, and `Recepcionista` to list and create `Cliente` records with nested `mascotas`, optionally creating a linked `Usuario` with role `Cliente` when both `username` and `password` are provided (returning `HTTP 400` if only one is provided or if `username`, `dni`, or `telefono` is duplicated).
-- [ ] `DELETE /api/clientes/{id}` is restricted to `Administrador` and cascades deletion to associated `Mascota` records.
-- [ ] `GET /api/clientes/me` and `PUT /api/clientes/me/foto` allow an authenticated `Cliente` to retrieve their own profile and update `foto_url` from `foto_base64`.
-- [ ] `POST /api/clientes/{id}/mascotas` allows `Administrador`, `Veterinario`, and `Recepcionista` to create a `Mascota` linked to the specified `Cliente` (`HTTP 404` if `Cliente` does not exist).
-- [ ] `GET /api/mascotas` returns all pets for staff (`Administrador`, `Veterinario`, `Recepcionista`) and only the authenticated owner's pets for `Cliente`.
-- [ ] `PUT /api/mascotas/{id}/foto` updates `foto_url` from `foto_base64`, enforcing that a `Cliente` can only modify their own `Mascota` (`HTTP 403` otherwise).
-- [ ] End-to-end `MockMvc` tests verify `Cliente` and `Mascota` CRUD, optional portal credential creation, photo updates, and `Cliente` ownership isolation.
+- [x] `GET /api/clientes` (with `skip` and `limit` pagination) and `POST /api/clientes` allow `Administrador`, `Veterinario`, and `Recepcionista` to list and create `Cliente` records with nested `mascotas`, optionally creating a linked `Usuario` with role `Cliente` when both `username` and `password` are provided (returning `HTTP 400` if only one is provided or if `username`, `dni`, or `telefono` is duplicated).
+- [x] `DELETE /api/clientes/{id}` is restricted to `Administrador` and cascades deletion to associated `Mascota` records.
+- [x] `GET /api/clientes/me` and `PUT /api/clientes/me/foto` allow an authenticated `Cliente` to retrieve their own profile and update `foto_url` from `foto_base64`.
+- [x] `POST /api/clientes/{id}/mascotas` allows `Administrador`, `Veterinario`, and `Recepcionista` to create a `Mascota` linked to the specified `Cliente` (`HTTP 404` if `Cliente` does not exist).
+- [x] `GET /api/mascotas` returns all pets for staff (`Administrador`, `Veterinario`, `Recepcionista`) and only the authenticated owner's pets for `Cliente`.
+- [x] `PUT /api/mascotas/{id}/foto` updates `foto_url` from `foto_base64`, enforcing that a `Cliente` can only modify their own `Mascota` (`HTTP 403` otherwise).
+- [x] End-to-end `MockMvc` tests verify `Cliente` and `Mascota` CRUD, optional portal credential creation, photo updates, and `Cliente` ownership isolation.
