@@ -38,8 +38,8 @@ public class MascotaDTO {
     private Long clienteId;
 
     @Builder.Default
-    private List<Object> vacunas = new ArrayList<>();
+    private List<VacunaDTO> vacunas = new ArrayList<>();
 
     @Builder.Default
-    private List<Object> consultas = new ArrayList<>();
+    private List<ConsultaDTO> consultas = new ArrayList<>();
 }
