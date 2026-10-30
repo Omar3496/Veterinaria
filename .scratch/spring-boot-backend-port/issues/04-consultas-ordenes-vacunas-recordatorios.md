@@ -4,14 +4,14 @@
 
 **Blocked by:** 02: Cliente & Mascota Management and Portal Profile, 03: Configuracion, ExamenAuxiliar Catalog, Cita Scheduling & Pago Billing, 05: Inventory Catalogs, Producto, Multi-Warehouse StockAlmacen, MovimientoStock & Ingreso
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] `POST /api/mascotas/{id}/consultas` and `POST /api/citas/{id}/atender` allow `Administrador` and `Veterinario` to create a `Consulta` along with nested `RecetaMedica`, `OrdenExamen` (validating active `ExamenAuxiliar` and setting `"REALIZADO"` when a non-empty `resultado` is supplied), and `ReferenciaMedica` records.
-- [ ] `POST /api/citas/{id}/atender` rejects cancelled or already-attended appointments (`HTTP 400`), transitions the `Cita` to `Completada`, and marks any `PENDIENTE` appointment-linked `OrdenExamen` as `REALIZADO`.
-- [ ] `PUT /api/examenes/{id}/resultado` allows `Administrador` and `Veterinario` to update `resultado`, `observaciones`, and `estado` (`PENDIENTE`, `REALIZADO`, `ANULADA`), defaulting `estado` to `"REALIZADO"` when a non-empty `resultado` is provided without an explicit state.
-- [ ] `GET /api/mascotas/{id}/historial`, `GET /api/mascotas/{id}/recetas`, `GET /api/mascotas/{id}/examenes`, and `GET /api/mascotas/{id}/referencias` return clinical records ordered by date descending and enforce ownership checks (`HTTP 403`) when called by a `Cliente`.
-- [ ] `GET /api/ordenes-medicas/mias` returns all `recetas`, `examenes` (from both consultations and appointments, deduplicated), and `referencias` for the authenticated `Cliente`, each enriched with `mascota_nombre`.
-- [ ] `POST /api/mascotas/{id}/vacunas` computes `proxima_dosis` when `intervalo_dias > 0`, defaults `tipo` from the linked `Producto` name when omitted, validates stock (`> 0`), and deducts 1 unit from both `Producto.stock` and `StockAlmacen("Disponible")`.
-- [ ] `GET /api/recordatorios` returns vaccinations with `proxima_dosis <= today + 15 days` sorted by `proxima_dosis` ascending, filtered to the caller's pets when the caller is a `Cliente`.
-- [ ] `GET /api/clientes` and `GET /api/mascotas` include each `Mascota`'s `vacunas` and `consultas` lists in their DTO responses.
-- [ ] End-to-end `MockMvc` tests verify direct consultations, attending appointments, medical order queries, exam result updates, vaccination stock deduction, and 15-day reminders.
+- [x] `POST /api/mascotas/{id}/consultas` and `POST /api/citas/{id}/atender` allow `Administrador` and `Veterinario` to create a `Consulta` along with nested `RecetaMedica`, `OrdenExamen` (validating active `ExamenAuxiliar` and setting `"REALIZADO"` when a non-empty `resultado` is supplied), and `ReferenciaMedica` records.
+- [x] `POST /api/citas/{id}/atender` rejects cancelled or already-attended appointments (`HTTP 400`), transitions the `Cita` to `Completada`, and marks any `PENDIENTE` appointment-linked `OrdenExamen` as `REALIZADO`.
+- [x] `PUT /api/examenes/{id}/resultado` allows `Administrador` and `Veterinario` to update `resultado`, `observaciones`, and `estado` (`PENDIENTE`, `REALIZADO`, `ANULADA`), defaulting `estado` to `"REALIZADO"` when a non-empty `resultado` is provided without an explicit state.
+- [x] `GET /api/mascotas/{id}/historial`, `GET /api/mascotas/{id}/recetas`, `GET /api/mascotas/{id}/examenes`, and `GET /api/mascotas/{id}/referencias` return clinical records ordered by date descending and enforce ownership checks (`HTTP 403`) when called by a `Cliente`.
+- [x] `GET /api/ordenes-medicas/mias` returns all `recetas`, `examenes` (from both consultations and appointments, deduplicated), and `referencias` for the authenticated `Cliente`, each enriched with `mascota_nombre`.
+- [x] `POST /api/mascotas/{id}/vacunas` computes `proxima_dosis` when `intervalo_dias > 0`, defaults `tipo` from the linked `Producto` name when omitted, validates stock (`> 0`), and deducts 1 unit from both `Producto.stock` and `StockAlmacen("Disponible")`.
+- [x] `GET /api/recordatorios` returns vaccinations with `proxima_dosis <= today + 15 days` sorted by `proxima_dosis` ascending, filtered to the caller's pets when the caller is a `Cliente`.
+- [x] `GET /api/clientes` and `GET /api/mascotas` include each `Mascota`'s `vacunas` and `consultas` lists in their DTO responses.
+- [x] End-to-end `MockMvc` tests verify direct consultations, attending appointments, medical order queries, exam result updates, vaccination stock deduction, and 15-day reminders.
