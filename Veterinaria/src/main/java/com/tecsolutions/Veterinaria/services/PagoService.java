@@ -5,6 +5,7 @@ import com.tecsolutions.Veterinaria.dto.PagoDTO;
 import com.tecsolutions.Veterinaria.mapper.PagoMapper;
 import com.tecsolutions.Veterinaria.model.*;
 import com.tecsolutions.Veterinaria.repository.*;
+import static com.tecsolutions.Veterinaria.security.SecurityUtils.isClienteRole;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -220,13 +221,5 @@ public class PagoService {
         return pagoRepository.findByCitaIdInOrderByFechaDesc(citaIds).stream()
                 .map(pagoMapper::toDTO)
                 .toList();
-    }
-
-    private boolean isClienteRole(String role) {
-        if (role == null) return false;
-        return role.equalsIgnoreCase("Cliente")
-                || role.equalsIgnoreCase("ROLE_Cliente")
-                || role.equalsIgnoreCase("CLIENTE")
-                || role.equalsIgnoreCase("ROLE_CLIENTE");
     }
 }

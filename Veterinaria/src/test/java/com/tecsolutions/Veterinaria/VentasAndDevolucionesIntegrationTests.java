@@ -596,6 +596,12 @@ public class VentasAndDevolucionesIntegrationTests {
             // ANULACION_VENTA movement logged
             List<MovimientoStock> movs = movimientoStockRepository.findAll();
             assertTrue(movs.stream().anyMatch(m -> "ANULACION_VENTA".equals(m.getTipoMovimiento()) && m.getCantidad() == 2));
+
+            // Attempting to cancel an already cancelled sale fails -> 400 Bad Request (Idempotency guard)
+            mockMvc.perform(put("/api/ventas/" + ventaId + "/estado?estado=Cancelada")
+                            .header("Authorization", "Bearer " + tokenFor(adminUser)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", containsString("No se puede pasar de 'Cancelada' a 'Cancelada'")));
         }
 
         @Test

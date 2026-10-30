@@ -1,13 +1,12 @@
 package com.tecsolutions.Veterinaria.controller;
 
 import com.tecsolutions.Veterinaria.dto.*;
-import com.tecsolutions.Veterinaria.model.Usuario;
+import com.tecsolutions.Veterinaria.security.SecurityUtils;
 import com.tecsolutions.Veterinaria.services.CitaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -46,7 +45,7 @@ public class CitaController {
             @RequestParam(defaultValue = "0") int skip,
             @RequestParam(defaultValue = "100") int limit,
             Authentication authentication) {
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(citaService.listarCitasMias(skip, limit, username));
     }
 
@@ -55,8 +54,8 @@ public class CitaController {
     public ResponseEntity<CitaDTO> createCita(
             @RequestBody CitaDTO dto,
             Authentication authentication) {
-        String username = extractUsername(authentication);
-        String role = extractRole(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
         return ResponseEntity.ok(citaService.agendarCita(dto, username, role));
     }
 
@@ -66,8 +65,8 @@ public class CitaController {
             @PathVariable Long id,
             @RequestBody ReprogramarCitaRequestDTO req,
             Authentication authentication) {
-        String username = extractUsername(authentication);
-        String role = extractRole(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
         return ResponseEntity.ok(citaService.reprogramarCita(id, req, username, role));
     }
 
@@ -77,7 +76,7 @@ public class CitaController {
             @PathVariable Long id,
             @RequestBody CancelarCitaRequestDTO req,
             Authentication authentication) {
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(citaService.cancelarCitaCliente(id, req, username));
     }
 
@@ -94,28 +93,5 @@ public class CitaController {
     @PreAuthorize("hasAnyRole('Administrador', 'Veterinario')")
     public ResponseEntity<Map<String, Object>> deleteCita(@PathVariable Long id) {
         return ResponseEntity.ok(citaService.eliminarCita(id));
-    }
-
-    private String extractUsername(Authentication authentication) {
-        if (authentication == null) {
-            return null;
-        }
-        if (authentication.getPrincipal() instanceof Usuario usuario) {
-            return usuario.getUsername();
-        }
-        return authentication.getName();
-    }
-
-    private String extractRole(Authentication authentication) {
-        if (authentication == null) {
-            return null;
-        }
-        if (authentication.getPrincipal() instanceof Usuario usuario) {
-            return usuario.getRol().getValue();
-        }
-        return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .findFirst()
-                .orElse(null);
     }
 }

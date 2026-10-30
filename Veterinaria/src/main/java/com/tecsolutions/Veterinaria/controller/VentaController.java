@@ -1,12 +1,11 @@
 package com.tecsolutions.Veterinaria.controller;
 
 import com.tecsolutions.Veterinaria.dto.*;
-import com.tecsolutions.Veterinaria.model.Usuario;
+import com.tecsolutions.Veterinaria.security.SecurityUtils;
 import com.tecsolutions.Veterinaria.services.VentaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +25,8 @@ public class VentaController {
     public ResponseEntity<VentaDTO> crearVenta(
             @RequestBody VentaCreateDTO dto,
             Authentication authentication) {
-        String username = extractUsername(authentication);
-        String role = extractRole(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
         return ResponseEntity.ok(ventaService.crearVenta(dto, username, role));
     }
 
@@ -42,7 +41,7 @@ public class VentaController {
     @GetMapping("/api/ventas/mias")
     @PreAuthorize("hasAnyRole('Cliente', 'CLIENTE')")
     public ResponseEntity<List<VentaDTO>> listarMisVentas(Authentication authentication) {
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(ventaService.listarMisVentas(username));
     }
 
@@ -51,8 +50,8 @@ public class VentaController {
     public ResponseEntity<VentaDTO> obtenerVenta(
             @PathVariable Long id,
             Authentication authentication) {
-        String username = extractUsername(authentication);
-        String role = extractRole(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
         return ResponseEntity.ok(ventaService.obtenerVenta(id, username, role));
     }
 
@@ -67,7 +66,7 @@ public class VentaController {
         if ((estadoFinal == null || estadoFinal.isBlank()) && body != null && body.containsKey("estado")) {
             estadoFinal = String.valueOf(body.get("estado"));
         }
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(ventaService.actualizarEstadoVenta(id, estadoFinal, username));
     }
 
@@ -76,7 +75,7 @@ public class VentaController {
     public ResponseEntity<VentaDTO> solicitarAnulacion(
             @PathVariable Long id,
             Authentication authentication) {
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(ventaService.solicitarAnulacion(id, username));
     }
 
@@ -86,7 +85,7 @@ public class VentaController {
             @PathVariable Long id,
             @RequestBody DevolucionRequestDTO req,
             Authentication authentication) {
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(ventaService.devolverVenta(id, req, username));
     }
 
@@ -96,8 +95,8 @@ public class VentaController {
             @RequestParam(defaultValue = "0") int skip,
             @RequestParam(defaultValue = "100") int limit,
             Authentication authentication) {
-        String username = extractUsername(authentication);
-        String role = extractRole(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
         return ResponseEntity.ok(ventaService.listarNotasCredito(skip, limit, username, role));
     }
 
@@ -107,29 +106,5 @@ public class VentaController {
             @RequestParam(defaultValue = "0") int skip,
             @RequestParam(defaultValue = "100") int limit) {
         return ResponseEntity.ok(ventaService.listarDevoluciones(skip, limit));
-    }
-
-    private String extractUsername(Authentication authentication) {
-        if (authentication == null) {
-            return null;
-        }
-        if (authentication.getPrincipal() instanceof Usuario usuario) {
-            return usuario.getUsername();
-        }
-        return authentication.getName();
-    }
-
-    private String extractRole(Authentication authentication) {
-        if (authentication == null) {
-            return null;
-        }
-        if (authentication.getPrincipal() instanceof Usuario usuario && usuario.getRol() != null) {
-            return usuario.getRol().getValue();
-        }
-        return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(a -> a.replace("ROLE_", ""))
-                .findFirst()
-                .orElse(null);
     }
 }

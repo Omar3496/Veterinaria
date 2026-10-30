@@ -3,7 +3,7 @@ package com.tecsolutions.Veterinaria.controller;
 import com.tecsolutions.Veterinaria.dto.ClienteDTO;
 import com.tecsolutions.Veterinaria.dto.FotoRequestDTO;
 import com.tecsolutions.Veterinaria.dto.MascotaDTO;
-import com.tecsolutions.Veterinaria.model.Usuario;
+import com.tecsolutions.Veterinaria.security.SecurityUtils;
 import com.tecsolutions.Veterinaria.services.ClienteService;
 import com.tecsolutions.Veterinaria.services.MascotaService;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class ClienteController {
     @GetMapping("/me")
     @PreAuthorize("hasRole('Cliente')")
     public ResponseEntity<ClienteDTO> obtenerClienteActual(Authentication authentication) {
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(clienteService.obtenerClienteActual(username));
     }
 
@@ -38,7 +38,7 @@ public class ClienteController {
     public ResponseEntity<ClienteDTO> actualizarFotoClienteActual(
             @RequestBody FotoRequestDTO req,
             Authentication authentication) {
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(clienteService.actualizarFotoClienteActual(username, req.getFotoBase64()));
     }
 
@@ -68,15 +68,5 @@ public class ClienteController {
             @PathVariable("cliente_id") Long clienteId,
             @RequestBody MascotaDTO dto) {
         return ResponseEntity.ok(mascotaService.crearMascotaParaCliente(clienteId, dto));
-    }
-
-    private String extractUsername(Authentication authentication) {
-        if (authentication == null) {
-            return null;
-        }
-        if (authentication.getPrincipal() instanceof Usuario usuario) {
-            return usuario.getUsername();
-        }
-        return authentication.getName();
     }
 }

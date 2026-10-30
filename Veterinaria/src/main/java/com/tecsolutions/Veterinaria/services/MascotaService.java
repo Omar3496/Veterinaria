@@ -8,6 +8,7 @@ import com.tecsolutions.Veterinaria.model.Usuario;
 import com.tecsolutions.Veterinaria.repository.ClienteRepository;
 import com.tecsolutions.Veterinaria.repository.MascotaRepository;
 import com.tecsolutions.Veterinaria.repository.UsuarioRepository;
+import static com.tecsolutions.Veterinaria.security.SecurityUtils.isClienteRole;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,13 +103,5 @@ public class MascotaService {
         mascota.setFotoUrl(fotoBase64);
         Mascota guardada = mascotaRepository.save(mascota);
         return mascotaMapper.toDTO(guardada);
-    }
-
-    private boolean isClienteRole(String role) {
-        if (role == null) {
-            return false;
-        }
-        String cleanRole = role.startsWith("ROLE_") ? role.substring(5) : role;
-        return "Cliente".equalsIgnoreCase(cleanRole);
     }
 }

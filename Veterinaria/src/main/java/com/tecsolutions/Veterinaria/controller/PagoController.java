@@ -2,12 +2,11 @@ package com.tecsolutions.Veterinaria.controller;
 
 import com.tecsolutions.Veterinaria.dto.PagoCreateDTO;
 import com.tecsolutions.Veterinaria.dto.PagoDTO;
-import com.tecsolutions.Veterinaria.model.Usuario;
+import com.tecsolutions.Veterinaria.security.SecurityUtils;
 import com.tecsolutions.Veterinaria.services.PagoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +27,8 @@ public class PagoController {
             @PathVariable("cita_id") Long citaId,
             @RequestBody(required = false) PagoCreateDTO pago,
             Authentication authentication) {
-        String username = extractUsername(authentication);
-        String role = extractRole(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
         return ResponseEntity.ok(pagoService.crearPagoCita(citaId, pago, username, role));
     }
 
@@ -39,38 +38,15 @@ public class PagoController {
             @PathVariable Long id,
             @RequestBody(required = false) Map<String, Object> resultado,
             Authentication authentication) {
-        String username = extractUsername(authentication);
-        String role = extractRole(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
         return ResponseEntity.ok(pagoService.procesarPago(id, resultado, username, role));
     }
 
     @GetMapping("/api/pagos/mios")
     @PreAuthorize("hasRole('Cliente')")
     public ResponseEntity<List<PagoDTO>> readMisPagos(Authentication authentication) {
-        String username = extractUsername(authentication);
+        String username = SecurityUtils.extractUsername(authentication);
         return ResponseEntity.ok(pagoService.listarMisPagos(username));
-    }
-
-    private String extractUsername(Authentication authentication) {
-        if (authentication == null) {
-            return null;
-        }
-        if (authentication.getPrincipal() instanceof Usuario usuario) {
-            return usuario.getUsername();
-        }
-        return authentication.getName();
-    }
-
-    private String extractRole(Authentication authentication) {
-        if (authentication == null) {
-            return null;
-        }
-        if (authentication.getPrincipal() instanceof Usuario usuario) {
-            return usuario.getRol().getValue();
-        }
-        return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .findFirst()
-                .orElse(null);
     }
 }

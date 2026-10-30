@@ -4,6 +4,7 @@ import com.tecsolutions.Veterinaria.dto.*;
 import com.tecsolutions.Veterinaria.mapper.CitaMapper;
 import com.tecsolutions.Veterinaria.model.*;
 import com.tecsolutions.Veterinaria.repository.*;
+import static com.tecsolutions.Veterinaria.security.SecurityUtils.isClienteRole;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -294,6 +295,10 @@ public class CitaService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para cancelar esta cita");
         }
 
+        if (dbCita.getEstado() == EstadoCita.CANCELADA) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cita ya se encuentra cancelada");
+        }
+
         dbCita.setEstado(EstadoCita.CANCELADA);
         dbCita.setMotivoCancelacion(req != null ? req.getMotivoCancelacion() : null);
 
@@ -310,6 +315,10 @@ public class CitaService {
             nuevoEstado = EstadoCita.fromValue(estadoStr);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado de cita inválido: " + estadoStr);
+        }
+
+        if (dbCita.getEstado() == EstadoCita.CANCELADA && nuevoEstado == EstadoCita.CANCELADA) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cita ya se encuentra cancelada");
         }
 
         if (nuevoEstado == EstadoCita.CANCELADA && (motivoCancelacion == null || motivoCancelacion.trim().isEmpty())) {
@@ -331,13 +340,5 @@ public class CitaService {
 
         citaRepository.delete(dbCita);
         return Map.of("detail", "Cita eliminada");
-    }
-
-    private boolean isClienteRole(String role) {
-        if (role == null) return false;
-        return role.equalsIgnoreCase("Cliente")
-                || role.equalsIgnoreCase("ROLE_Cliente")
-                || role.equalsIgnoreCase("CLIENTE")
-                || role.equalsIgnoreCase("ROLE_CLIENTE");
     }
 }

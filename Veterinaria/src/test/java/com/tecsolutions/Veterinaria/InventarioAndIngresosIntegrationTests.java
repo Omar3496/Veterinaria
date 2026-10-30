@@ -712,6 +712,12 @@ public class InventarioAndIngresosIntegrationTests {
             // ANULACION_INGRESO logged
             List<MovimientoStock> updatedKardex = movimientoStockRepository.findAll();
             assertTrue(updatedKardex.stream().anyMatch(m -> "ANULACION_INGRESO".equals(m.getTipoMovimiento()) && m.getCantidad() == -10));
+
+            // Repeating delete on already annulled ingreso fails -> 404 Not Found (Idempotency guard)
+            mockMvc.perform(delete("/api/ingresos/" + ingresoId)
+                            .header("Authorization", "Bearer " + adminToken))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.detail").value("Ingreso no encontrado"));
         }
 
         @Test

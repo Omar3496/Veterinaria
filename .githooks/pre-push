@@ -1,0 +1,8 @@
+#!/bin/sh
+echo "Running pre-push compile check on Veterinaria..."
+cd "$(git rev-parse --show-toplevel)/Veterinaria" || exit 1
+if [ -f "./mvnw" ]; then
+    ./mvnw test-compile
+else
+    mvn test-compile
+fi

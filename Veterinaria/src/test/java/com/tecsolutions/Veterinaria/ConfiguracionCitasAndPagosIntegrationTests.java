@@ -656,6 +656,22 @@ public class ConfiguracionCitasAndPagosIntegrationTests {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.estado", is("Cancelada")))
                     .andExpect(jsonPath("$.motivo_cancelacion", is("Emergencia médica del veterinario")));
+
+            // Double cancellation fails -> 400 Bad Request (Idempotency guard)
+            mockMvc.perform(put("/api/citas/" + cita.getId() + "/estado")
+                            .header("Authorization", "Bearer " + tokenFor(adminUser))
+                            .param("estado", "Cancelada")
+                            .param("motivo_cancelacion", "Intento duplicado"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", is("La cita ya se encuentra cancelada")));
+
+            // Cliente cancellation on already cancelled appointment fails -> 400 Bad Request
+            mockMvc.perform(put("/api/citas/" + cita.getId() + "/cancelar")
+                            .header("Authorization", "Bearer " + tokenFor(clienteUser1))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(cancelReq)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.detail", is("La cita ya se encuentra cancelada")));
         }
 
         @Test
