@@ -1,0 +1,26 @@
+meta {
+  name: 02. Actualizar Estado de Cita (PATCH /api/citas/:id/estado)
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/api/citas/{{cita_id}}/estado?estado=EN_ATENCION
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Estado de cita actualizado a EN_ATENCION", function() {
+    expect(res.getBody().estado).to.equal('EN_ATENCION');
+  });
+}
+

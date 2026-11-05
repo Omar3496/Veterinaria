@@ -1,0 +1,26 @@
+meta {
+  name: 01. Eliminar Categoría (DELETE /api/categorias/:id)
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{baseUrl}}/api/categorias/{{categoria_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Mensaje confirma categoría eliminada", function() {
+    expect(res.getBody().detail).to.equal('Categoría eliminada');
+  });
+}
+

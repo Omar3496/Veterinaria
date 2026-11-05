@@ -39,6 +39,14 @@ public class CategoriaController {
         return ResponseEntity.ok(catalogoService.actualizarCategoria(id, dto));
     }
 
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'ADMIN')")
+    public ResponseEntity<CategoriaDTO> patchCategoria(
+            @PathVariable Long id,
+            @RequestBody CategoriaDTO dto) {
+        return ResponseEntity.ok(catalogoService.actualizarCategoria(id, dto));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('Administrador', 'ADMIN')")
     public ResponseEntity<Map<String, String>> eliminarCategoria(@PathVariable Long id) {

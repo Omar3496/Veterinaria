@@ -1,0 +1,25 @@
+meta {
+  name: 04. Listar Clientes (GET /api/clientes)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/clientes?skip=0&limit=10
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Retorna arreglo de clientes registrados", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+}

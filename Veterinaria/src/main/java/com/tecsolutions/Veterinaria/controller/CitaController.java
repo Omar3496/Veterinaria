@@ -89,6 +89,15 @@ public class CitaController {
         return ResponseEntity.ok(citaService.actualizarEstadoCita(id, estado, motivoCancelacion));
     }
 
+    @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasAnyRole('Administrador', 'Veterinario', 'Recepcionista')")
+    public ResponseEntity<CitaDTO> patchCitaEstado(
+            @PathVariable Long id,
+            @RequestParam String estado,
+            @RequestParam(required = false, name = "motivo_cancelacion") String motivoCancelacion) {
+        return ResponseEntity.ok(citaService.actualizarEstadoCita(id, estado, motivoCancelacion));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('Administrador', 'Veterinario')")
     public ResponseEntity<Map<String, Object>> deleteCita(@PathVariable Long id) {

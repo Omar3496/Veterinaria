@@ -1,0 +1,26 @@
+meta {
+  name: 03. Listar Categorías (GET /api/categorias)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/categorias
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Retorna arreglo de categorías", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+}
+

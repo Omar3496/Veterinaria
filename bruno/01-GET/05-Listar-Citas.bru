@@ -1,0 +1,26 @@
+meta {
+  name: 05. Listar Citas (GET /api/citas)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/citas?skip=0&limit=10
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Retorna arreglo de citas programadas", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+}
+

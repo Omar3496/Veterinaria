@@ -1,0 +1,44 @@
+meta {
+  name: 01. Login como Administrador (POST /token)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/token
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  username: admin
+  password: admin123
+}
+
+vars:post-response {
+  token: res.body.access_token
+  admin_token: res.body.access_token
+}
+
+script:post-response {
+  if (res.body && res.body.access_token) {
+    bru.setVar("token", res.body.access_token);
+    bru.setEnvVar("token", res.body.access_token);
+    bru.setVar("admin_token", res.body.access_token);
+    bru.setEnvVar("admin_token", res.body.access_token);
+  }
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Debe retornar token JWT", function() {
+    expect(res.getBody().access_token).to.be.a('string');
+  });
+  
+  test("Rol del usuario debe ser Administrador", function() {
+    expect(res.getBody().user.rol).to.equal('Administrador');
+  });
+}

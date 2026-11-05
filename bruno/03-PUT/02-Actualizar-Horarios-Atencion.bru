@@ -1,0 +1,40 @@
+meta {
+  name: 02. Actualizar Horarios de Atención (PUT /api/configuracion/horarios)
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/configuracion/horarios
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "dias": [1, 2, 3, 4, 5, 6],
+    "hora_inicio": "08:30",
+    "hora_fin": "19:00",
+    "duracion_min": 30
+  }
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Horario inicio actualizado correctamente", function() {
+    expect(res.getBody().hora_inicio).to.equal('08:30');
+  });
+
+  test("Horario fin actualizado correctamente", function() {
+    expect(res.getBody().hora_fin).to.equal('19:00');
+  });
+}
+

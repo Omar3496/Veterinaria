@@ -1,0 +1,45 @@
+meta {
+  name: 01. Crear Categoría (POST /api/categorias)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/categorias
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "nombre": "Accesorios y Medicinas Demo"
+  }
+}
+
+vars:post-response {
+  categoria_id: res.body.id
+}
+
+script:post-response {
+  if (res.body && res.body.id) {
+    bru.setVar("categoria_id", res.body.id);
+    bru.setEnvVar("categoria_id", res.body.id);
+  }
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Debe retornar categoría creada con ID numérico", function() {
+    expect(res.getBody().id).to.be.a('number');
+    expect(res.getBody().nombre).to.equal('Accesorios y Medicinas Demo');
+  });
+}
+

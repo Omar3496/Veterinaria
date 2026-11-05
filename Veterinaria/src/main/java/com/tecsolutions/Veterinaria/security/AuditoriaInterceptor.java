@@ -15,7 +15,7 @@ import java.util.Set;
 @Component
 public class AuditoriaInterceptor implements HandlerInterceptor {
 
-    private static final Set<String> MUTATING_METHODS = Set.of("POST", "PUT", "DELETE");
+    private static final Set<String> MUTATING_METHODS = Set.of("POST", "PUT", "DELETE", "PATCH");
 
     private final AuditoriaService auditoriaService;
     private final UsuarioRepository usuarioRepository;

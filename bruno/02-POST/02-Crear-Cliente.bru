@@ -1,0 +1,48 @@
+meta {
+  name: 02. Crear Cliente (POST /api/clientes)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/clientes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "dni": "77889900",
+    "nombre": "Roberto Sanchez",
+    "telefono": "912345678",
+    "email": "rsanchez@ejemplo.pe"
+  }
+}
+
+vars:post-response {
+  cliente_id: res.body.id
+}
+
+script:post-response {
+  if (res.body && res.body.id) {
+    bru.setVar("cliente_id", res.body.id);
+    bru.setEnvVar("cliente_id", res.body.id);
+  }
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Debe retornar cliente creado con su respectivo ID", function() {
+    expect(res.getBody().id).to.be.a('number');
+    expect(res.getBody().nombre).to.equal('Roberto Sanchez');
+  });
+}
+

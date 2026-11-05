@@ -1,0 +1,33 @@
+meta {
+  name: 01. Actualización Parcial Categoría (PATCH /api/categorias/:id)
+  type: http
+  seq: 1
+}
+
+patch {
+  url: {{baseUrl}}/api/categorias/{{categoria_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "nombre": "Farmacia y Medicinas Premium (PATCH)"
+  }
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("El nombre de la categoría refleja la modificación por PATCH", function() {
+    expect(res.getBody().nombre).to.equal('Farmacia y Medicinas Premium (PATCH)');
+  });
+}
+

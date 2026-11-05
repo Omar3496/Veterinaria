@@ -1,0 +1,44 @@
+meta {
+  name: 02. Login como Cliente (POST /token)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/token
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  username: jperez
+  password: cliente123
+}
+
+vars:post-response {
+  token: res.body.access_token
+  cliente_token: res.body.access_token
+}
+
+script:post-response {
+  if (res.body && res.body.access_token) {
+    bru.setVar("token", res.body.access_token);
+    bru.setEnvVar("token", res.body.access_token);
+    bru.setVar("cliente_token", res.body.access_token);
+    bru.setEnvVar("cliente_token", res.body.access_token);
+  }
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Debe retornar token JWT de cliente", function() {
+    expect(res.getBody().access_token).to.be.a('string');
+  });
+  
+  test("Rol del usuario autenticado debe ser Cliente", function() {
+    expect(res.getBody().user.rol).to.equal('Cliente');
+  });
+}

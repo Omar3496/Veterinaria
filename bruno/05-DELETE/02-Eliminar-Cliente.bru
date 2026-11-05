@@ -1,0 +1,26 @@
+meta {
+  name: 02. Eliminar Cliente (DELETE /api/clientes/:id)
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{baseUrl}}/api/clientes/{{cliente_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Mensaje confirma cliente eliminado", function() {
+    expect(res.getBody().detail).to.equal('Cliente eliminado');
+  });
+}
+
