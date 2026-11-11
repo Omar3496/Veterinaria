@@ -60,7 +60,7 @@ public class SecurityConfig {
                 .contentTypeOptions(Customizer.withDefaults())
                 .frameOptions(frame -> frame.sameOrigin())
                 .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self'")
+                    .policyDirectives("default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'")
                 )
             )
             .exceptionHandling(ex -> ex
@@ -78,6 +78,11 @@ public class SecurityConfig {
                 })
             )
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html"
+                ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/token").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/registro-cliente").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/recuperar-password").permitAll()

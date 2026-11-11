@@ -39,6 +39,16 @@ public class CitaController {
         return ResponseEntity.ok(citaService.listarCitas(skip, limit));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'Veterinario', 'Recepcionista', 'Cliente')")
+    public ResponseEntity<CitaDTO> readCita(
+            @PathVariable Long id,
+            Authentication authentication) {
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
+        return ResponseEntity.ok(citaService.obtenerCitaPorId(id, username, role));
+    }
+
     @GetMapping("/mias")
     @PreAuthorize("hasRole('Cliente')")
     public ResponseEntity<List<CitaConMascotaDTO>> readCitasMias(

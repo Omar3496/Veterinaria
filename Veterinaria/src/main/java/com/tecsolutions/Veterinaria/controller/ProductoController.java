@@ -30,6 +30,11 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.listarProductos(skip, limit));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductoDTO> obtenerProductoPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(productoService.obtenerProductoPorId(id));
+    }
+
     @GetMapping("/next-sku")
     @PreAuthorize("hasAnyRole('Administrador', 'ADMIN', 'Recepcionista', 'RECEPCIONISTA')")
     public ResponseEntity<NextSkuResponseDTO> obtenerSiguienteSku() {

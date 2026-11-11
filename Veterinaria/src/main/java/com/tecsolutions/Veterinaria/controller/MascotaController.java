@@ -32,6 +32,16 @@ public class MascotaController {
         return ResponseEntity.ok(mascotaService.listarMascotas(skip, limit, username, role));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'Veterinario', 'Recepcionista', 'Cliente')")
+    public ResponseEntity<MascotaDTO> obtenerMascotaPorId(
+            @PathVariable Long id,
+            Authentication authentication) {
+        String username = SecurityUtils.extractUsername(authentication);
+        String role = SecurityUtils.extractRole(authentication);
+        return ResponseEntity.ok(mascotaService.obtenerMascotaPorId(id, username, role));
+    }
+
     @PutMapping("/{id}/foto")
     @PreAuthorize("hasAnyRole('Administrador', 'Veterinario', 'Recepcionista', 'Cliente')")
     public ResponseEntity<MascotaDTO> actualizarFotoMascota(

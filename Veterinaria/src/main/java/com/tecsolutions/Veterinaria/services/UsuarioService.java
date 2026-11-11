@@ -37,6 +37,13 @@ public class UsuarioService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public UsuarioDTO obtenerUsuarioPorId(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        return usuarioMapper.toDTO(usuario);
+    }
+
     public UsuarioDTO crearUsuario(UsuarioCreateDTO dto) {
         RolEnum rol;
         try {

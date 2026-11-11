@@ -50,6 +50,12 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.listarClientes(skip, limit));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'Veterinario', 'Recepcionista')")
+    public ResponseEntity<ClienteDTO> obtenerClientePorId(@PathVariable Long id) {
+        return ResponseEntity.ok(clienteService.obtenerClientePorId(id));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('Administrador', 'Veterinario', 'Recepcionista')")
     public ResponseEntity<ClienteDTO> crearCliente(@RequestBody ClienteDTO dto) {

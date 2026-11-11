@@ -82,6 +82,28 @@ public class MascotaService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public MascotaDTO obtenerMascotaPorId(Long id, String currentUsername, String currentRole) {
+        Mascota mascota = mascotaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Mascota no encontrada"
+                ));
+
+        if (isClienteRole(currentRole)) {
+            Usuario usuario = currentUsername != null ? usuarioRepository.findByUsername(currentUsername).orElse(null) : null;
+            Cliente cliente = usuario != null ? clienteRepository.findByUsuarioId(usuario.getId()).orElse(null) : null;
+            if (cliente == null || mascota.getPropietario() == null || !cliente.getId().equals(mascota.getPropietario().getId())) {
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "No tienes permiso para ver esta mascota"
+                );
+            }
+        }
+
+        return mascotaMapper.toDTO(mascota);
+    }
+
     public MascotaDTO actualizarFotoMascota(Long mascotaId, String fotoBase64, String currentUsername, String currentRole) {
         Mascota mascota = mascotaRepository.findById(mascotaId)
                 .orElseThrow(() -> new ResponseStatusException(

@@ -29,6 +29,12 @@ public class IngresoController {
         return ResponseEntity.ok(ingresoService.listarIngresos(skip, limit));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'ADMIN', 'Recepcionista', 'RECEPCIONISTA')")
+    public ResponseEntity<IngresoDTO> obtenerIngresoPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ingresoService.obtenerIngresoPorId(id));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('Administrador', 'ADMIN', 'Recepcionista', 'RECEPCIONISTA')")
     public ResponseEntity<IngresoDTO> crearIngreso(

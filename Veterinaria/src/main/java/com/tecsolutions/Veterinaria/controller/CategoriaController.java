@@ -25,6 +25,12 @@ public class CategoriaController {
         return ResponseEntity.ok(catalogoService.listarCategorias());
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'ADMIN', 'Recepcionista', 'RECEPCIONISTA')")
+    public ResponseEntity<CategoriaDTO> obtenerCategoriaPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(catalogoService.obtenerCategoriaPorId(id));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('Administrador', 'ADMIN')")
     public ResponseEntity<CategoriaDTO> crearCategoria(@RequestBody CategoriaDTO dto) {

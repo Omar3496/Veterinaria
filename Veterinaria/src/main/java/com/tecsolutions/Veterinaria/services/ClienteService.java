@@ -45,6 +45,16 @@ public class ClienteService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public ClienteDTO obtenerClientePorId(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Cliente no encontrado"
+                ));
+        return clienteMapper.toDTO(cliente);
+    }
+
     public ClienteDTO crearCliente(ClienteDTO dto) {
         boolean hasUsername = dto.getUsername() != null && !dto.getUsername().isBlank();
         boolean hasPassword = dto.getPassword() != null && !dto.getPassword().isBlank();

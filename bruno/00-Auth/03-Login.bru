@@ -6,7 +6,7 @@ meta {
 
 post {
   url: {{baseUrl}}/token
-  body: form-urlencoded
+  body: formUrlEncoded
   auth: none
 }
 
@@ -32,13 +32,12 @@ tests {
   test("Status HTTP debe ser 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
-
+  
   test("Debe retornar token JWT", function() {
     expect(res.getBody().access_token).to.be.a('string');
   });
-
+  
   test("Retorna información del usuario autenticado", function() {
     expect(res.getBody().user).to.be.an('object');
   });
 }
-

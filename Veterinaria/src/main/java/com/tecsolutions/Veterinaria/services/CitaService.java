@@ -211,6 +211,23 @@ public class CitaService {
     }
 
     @Transactional(readOnly = true)
+    public CitaDTO obtenerCitaPorId(Long id, String currentUsername, String currentRole) {
+        Cita dbCita = citaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada"));
+
+        if (isClienteRole(currentRole)) {
+            Usuario usuario = currentUsername != null ? usuarioRepository.findByUsername(currentUsername).orElse(null) : null;
+            Cliente cliente = (usuario != null) ? clienteRepository.findByUsuarioId(usuario.getId()).orElse(null) : null;
+            if (cliente == null || dbCita.getMascota() == null || dbCita.getMascota().getPropietario() == null
+                    || !cliente.getId().equals(dbCita.getMascota().getPropietario().getId())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver esta cita");
+            }
+        }
+
+        return citaMapper.toDTO(dbCita);
+    }
+
+    @Transactional(readOnly = true)
     public List<CitaConMascotaDTO> listarCitasMias(int skip, int limit, String currentUsername) {
         Usuario usuario = usuarioRepository.findByUsername(currentUsername).orElse(null);
         Cliente cliente = (usuario != null) ? clienteRepository.findByUsuarioId(usuario.getId()).orElse(null) : null;

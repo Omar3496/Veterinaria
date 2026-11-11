@@ -1,0 +1,23 @@
+meta {
+  name: 09. Obtener Producto por ID (GET /api/productos/:id)
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/productos/1
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Retorna datos del producto con ID 1", function() {
+    expect(res.getBody().id).to.equal(1);
+    expect(res.getBody().nombre).to.be.a('string');
+  });
+}
+

@@ -70,6 +70,13 @@ public class CatalogoService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public ProveedorDTO obtenerProveedorPorId(Long id) {
+        Proveedor proveedor = proveedorRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Proveedor no encontrado"));
+        return proveedorMapper.toDTO(proveedor);
+    }
+
     public ProveedorDTO crearProveedor(ProveedorDTO dto) {
         if (dto.getRuc() != null && !dto.getRuc().isBlank()) {
             proveedorRepository.findByRuc(dto.getRuc()).ifPresent(p -> {
@@ -124,6 +131,13 @@ public class CatalogoService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public CategoriaDTO obtenerCategoriaPorId(Long id) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada"));
+        return categoriaMapper.toDTO(categoria);
+    }
+
     public CategoriaDTO crearCategoria(CategoriaDTO dto) {
         categoriaRepository.findByNombre(dto.getNombre()).ifPresent(c -> {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Categoría ya registrada");
@@ -163,6 +177,13 @@ public class CatalogoService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public FamiliaDTO obtenerFamiliaPorId(Long id) {
+        Familia familia = familiaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Familia no encontrada"));
+        return familiaMapper.toDTO(familia);
+    }
+
     public FamiliaDTO crearFamilia(FamiliaDTO dto) {
         familiaRepository.findByNombre(dto.getNombre()).ifPresent(f -> {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Familia ya registrada");
@@ -200,6 +221,13 @@ public class CatalogoService {
         return marcaRepository.findAllByOrderByNombreAsc().stream()
                 .map(marcaMapper::toDTO)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public MarcaDTO obtenerMarcaPorId(Long id) {
+        Marca marca = marcaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Marca no encontrada"));
+        return marcaMapper.toDTO(marca);
     }
 
     public MarcaDTO crearMarca(MarcaDTO dto) {

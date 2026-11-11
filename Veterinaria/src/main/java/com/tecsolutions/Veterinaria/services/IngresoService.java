@@ -64,6 +64,13 @@ public class IngresoService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public IngresoDTO obtenerIngresoPorId(Long id) {
+        Ingreso ingreso = ingresoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ingreso no encontrado"));
+        return ingresoMapper.toDTO(ingreso);
+    }
+
     public IngresoDTO crearIngreso(IngresoDTO dto, Usuario usuario) {
         if (dto.getProveedorId() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Proveedor no encontrado");

@@ -25,6 +25,12 @@ public class MarcaController {
         return ResponseEntity.ok(catalogoService.listarMarcas());
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'ADMIN', 'Recepcionista', 'RECEPCIONISTA')")
+    public ResponseEntity<MarcaDTO> obtenerMarcaPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(catalogoService.obtenerMarcaPorId(id));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('Administrador', 'ADMIN')")
     public ResponseEntity<MarcaDTO> crearMarca(@RequestBody MarcaDTO dto) {

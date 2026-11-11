@@ -21,13 +21,16 @@ body:json {
   }
 }
 
+vars:pre-request {
+  categoria_id: 9
+}
+
 tests {
   test("Status HTTP debe ser 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
-
+  
   test("Nombre de la categoría fue actualizado completamente", function() {
     expect(res.getBody().nombre).to.equal('Farmacia Veterinaria y Medicinas');
   });
 }
-

@@ -25,6 +25,12 @@ public class FamiliaController {
         return ResponseEntity.ok(catalogoService.listarFamilias());
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'ADMIN', 'Recepcionista', 'RECEPCIONISTA')")
+    public ResponseEntity<FamiliaDTO> obtenerFamiliaPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(catalogoService.obtenerFamiliaPorId(id));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('Administrador', 'ADMIN')")
     public ResponseEntity<FamiliaDTO> crearFamilia(@RequestBody FamiliaDTO dto) {

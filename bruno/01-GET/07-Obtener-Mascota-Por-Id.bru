@@ -1,0 +1,27 @@
+meta {
+  name: 07. Obtener Mascota por ID (GET /api/mascotas/:id)
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/mascotas/1
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+tests {
+  test("Status HTTP debe ser 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Retorna datos de la mascota con ID 1", function() {
+    expect(res.getBody().id).to.equal(1);
+    expect(res.getBody().nombre).to.be.a('string');
+  });
+}
+

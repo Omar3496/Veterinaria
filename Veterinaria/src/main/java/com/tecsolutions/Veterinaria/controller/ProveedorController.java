@@ -27,6 +27,12 @@ public class ProveedorController {
         return ResponseEntity.ok(catalogoService.listarProveedores(skip, limit));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Administrador', 'ADMIN', 'Recepcionista', 'RECEPCIONISTA')")
+    public ResponseEntity<ProveedorDTO> obtenerProveedorPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(catalogoService.obtenerProveedorPorId(id));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('Administrador', 'ADMIN')")
     public ResponseEntity<ProveedorDTO> crearProveedor(@RequestBody ProveedorDTO dto) {

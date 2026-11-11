@@ -91,6 +91,17 @@ public class ProductoService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public ProductoDTO obtenerProductoPorId(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Producto no encontrado"
+                ));
+        asegurarStockAlmacen(producto);
+        return productoMapper.toDTO(producto);
+    }
+
     public ProductoDTO crearProducto(ProductoDTO dto) {
         String sku = dto.getSku();
         if (sku == null || sku.isBlank()) {

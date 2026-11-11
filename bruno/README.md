@@ -35,6 +35,16 @@ Para demostrar en tu presentación que la seguridad de Spring Boot está activa 
 3. **`03. Demostración RBAC - Cliente Denegado (403 Forbidden)`**: Envía una petición a `GET /api/clientes` con el token de Cliente. El backend responde **`403 Forbidden`** con el mensaje `"No tienes permisos suficientes para realizar esta acción"`.
 4. **`04. Demostración RBAC - Cliente Consulta su Perfil (200 OK)`**: Demuestra lo que el cliente sí puede consultar (`GET /api/clientes/me`), retornando **`200 OK`**.
 5. **`05. Reconectar como Administrador`**: Restablece `{{token}}` al rol de Administrador para que el resto de operaciones CRUD puedan ejecutarse con normalidad.
+6. **`03. Login Personalizado`**: Solicita interactivamente `username` y `password` en una ventana modal (Prompt) para autenticarte con cualquier usuario del sistema y guardar su token en `{{token}}`.
+
+### 👥 Usuarios de Prueba Precargados (DataSeeder)
+| Usuario | Contraseña | Rol | Permisos Principales |
+| :--- | :--- | :--- | :--- |
+| `admin` | `admin123` | `Administrador` | Acceso total (CRUD, auditoría, usuarios, catálogos, citas) |
+| `vet` | `vet123` | `Veterinario` | Citas, consultas, historias clínicas, recetas, inventario |
+| `recep` | `recep123` | `Recepcionista` | Clientes, citas, pagos, ventas, productos |
+| `jperez` | `cliente123` | `Cliente` | Portal cliente: citas propias (`/mias`), perfil propio (`/me`) |
+| `mlopez` | `cliente123` | `Cliente` | Portal cliente: citas propias (`/mias`), perfil propio (`/me`) |
 
 ---
 
@@ -52,14 +62,19 @@ Para demostrar en tu presentación que la seguridad de Spring Boot está activa 
 | **8** | `01-GET / 03. Listar Categorías` | `GET` | `/api/categorias` | Consulta protegida con Bearer Token. |
 | **9** | `01-GET / 04. Listar Clientes` | `GET` | `/api/clientes` | Consulta protegida de clientes registrados (Admin/Staff). |
 | **10** | `01-GET / 05. Listar Citas` | `GET` | `/api/citas` | Consulta protegida de citas de la clínica. |
-| **11** | `02-POST / 01. Crear Categoría` | `POST` | `/api/categorias` | Crea `"Accesorios y Medicinas Demo"`, captura su nuevo ID en `{{categoria_id}}`. |
-| **12** | `02-POST / 02. Crear Cliente` | `POST` | `/api/clientes` | Registra un nuevo cliente con DNI y teléfono, guardando `{{cliente_id}}`. |
-| **13** | `03-PUT / 01. Actualizar Categoría Completa` | `PUT` | `/api/categorias/{{categoria_id}}` | Reemplaza el recurso con `"Farmacia Veterinaria y Medicinas"`. |
-| **14** | `03-PUT / 02. Actualizar Horarios de Atención` | `PUT` | `/api/configuracion/horarios` | Actualiza rangos de atención del establecimiento. |
-| **15** | `04-PATCH / 01. Actualización Parcial Categoría` | `PATCH` | `/api/categorias/{{categoria_id}}` | Aplica una modificación parcial `"Farmacia y Medicinas Premium (PATCH)"`. |
-| **16** | `04-PATCH / 02. Actualizar Estado de Cita` | `PATCH` | `/api/citas/{{cita_id}}/estado?estado=EN_ATENCION` | Modifica únicamente el estado de la cita médica a `EN_ATENCION`. |
-| **17** | `05-DELETE / 01. Eliminar Categoría` | `DELETE` | `/api/categorias/{{categoria_id}}` | Elimina la categoría creada y verifica respuesta 200. |
-| **18** | `05-DELETE / 02. Eliminar Cliente` | `DELETE` | `/api/clientes/{{cliente_id}}` | Elimina el cliente creado y verifica respuesta 200. |
+| **11** | `01-GET / 06. Obtener Cliente por ID` | `GET` | `/api/clientes/1` | Consulta detalle de un cliente específico por ID. |
+| **12** | `01-GET / 07. Obtener Mascota por ID` | `GET` | `/api/mascotas/1` | Consulta detalle de una mascota específica por ID. |
+| **13** | `01-GET / 08. Obtener Cita por ID` | `GET` | `/api/citas/1` | Consulta detalle de una cita específica por ID. |
+| **14** | `01-GET / 09. Obtener Producto por ID` | `GET` | `/api/productos/1` | Consulta detalle de un producto específico por ID (público). |
+| **15** | `01-GET / 10. Obtener Categoría por ID` | `GET` | `/api/categorias/1` | Consulta detalle de una categoría específica por ID. |
+| **16** | `02-POST / 01. Crear Categoría` | `POST` | `/api/categorias` | Crea `"Accesorios y Medicinas Demo"`, captura su nuevo ID en `{{categoria_id}}`. |
+| **17** | `02-POST / 02. Crear Cliente` | `POST` | `/api/clientes` | Registra un nuevo cliente con DNI y teléfono, guardando `{{cliente_id}}`. |
+| **18** | `03-PUT / 01. Actualizar Categoría Completa` | `PUT` | `/api/categorias/{{categoria_id}}` | Reemplaza el recurso con `"Farmacia Veterinaria y Medicinas"`. |
+| **19** | `03-PUT / 02. Actualizar Horarios de Atención` | `PUT` | `/api/configuracion/horarios` | Actualiza rangos de atención del establecimiento. |
+| **20** | `04-PATCH / 01. Actualización Parcial Categoría` | `PATCH` | `/api/categorias/{{categoria_id}}` | Aplica una modificación parcial `"Farmacia y Medicinas Premium (PATCH)"`. |
+| **21** | `04-PATCH / 02. Actualizar Estado de Cita` | `PATCH` | `/api/citas/{{cita_id}}/estado?estado=EN_ATENCION` | Modifica únicamente el estado de la cita médica a `EN_ATENCION`. |
+| **22** | `05-DELETE / 01. Eliminar Categoría` | `DELETE` | `/api/categorias/{{categoria_id}}` | Elimina la categoría creada y verifica respuesta 200. |
+| **23** | `05-DELETE / 02. Eliminar Cliente` | `DELETE` | `/api/clientes/{{cliente_id}}` | Elimina el cliente creado y verifica respuesta 200. |
 
 ---
 
