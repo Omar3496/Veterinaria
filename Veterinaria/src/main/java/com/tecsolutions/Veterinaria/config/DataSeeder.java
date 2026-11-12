@@ -107,17 +107,35 @@ public class DataSeeder implements CommandLineRunner {
         mascota2.setNombre("Michi");
         mascota2.setEspecie("Gato");
         mascota2.setRaza("Siames");
+        mascota2.setFechaNacimiento(LocalDate.of(2014, 3, 15));
         mascota2.setPropietario(cliente1);
 
         Mascota mascota3 = new Mascota();
         mascota3.setNombre("Rex");
         mascota3.setEspecie("Perro");
         mascota3.setRaza("Pastor Aleman");
+        mascota3.setFechaNacimiento(LocalDate.of(2022, 8, 20));
         mascota3.setPropietario(cliente2);
+
+        Mascota mascota4 = new Mascota();
+        mascota4.setNombre("Luna");
+        mascota4.setEspecie("Gato");
+        mascota4.setRaza("Persa");
+        mascota4.setFechaNacimiento(LocalDate.of(2021, 11, 5));
+        mascota4.setPropietario(cliente2);
+
+        Mascota mascota5 = new Mascota();
+        mascota5.setNombre("Toby");
+        mascota5.setEspecie("Perro");
+        mascota5.setRaza("Bulldog");
+        mascota5.setFechaNacimiento(LocalDate.of(2018, 6, 1));
+        mascota5.setPropietario(cliente1);
 
         mascota1 = mascotaRepository.save(mascota1);
         mascota2 = mascotaRepository.save(mascota2);
         mascota3 = mascotaRepository.save(mascota3);
+        mascota4 = mascotaRepository.save(mascota4);
+        mascota5 = mascotaRepository.save(mascota5);
 
         // 3. Proveedor
         Proveedor prov1 = new Proveedor();
@@ -181,7 +199,7 @@ public class DataSeeder implements CommandLineRunner {
                 new ClasifRule("Alimento para Gatos", List.of("gato", "whiskas", "cat")),
                 new ClasifRule("Golosinas y Snacks", List.of("snack", "premio", "bocadito", "galleta")),
                 new ClasifRule("Higiene y Aseo", List.of("champu", "jabon", "shampoo", "cepillo", "peine")),
-                new ClasifRule("Farmacia y Vacunas", List.of("vacuna", "antibiotico", "analgesico", "jeringa", "antipulgas", "garrapatas", "desparasitante", "amoxicilina")),
+                new ClasifRule("Farmacia y Vacunas", List.of("vacuna", "antibiotico", "analgesico", "jeringa", "antipulgas", "garrapatas", "desparasitante", "amoxicilina", "naproxeno", "paracetamol")),
                 new ClasifRule("Juguetes", List.of("pelota", "hueso", "cuerda", "mordedor", "juguete")),
                 new ClasifRule("Accesorios", List.of("correa", "collar", "arnes", "cama", "manta", "colchon"))
         );
@@ -240,7 +258,9 @@ public class DataSeeder implements CommandLineRunner {
                 new ProdDef("P044", "Arnés Pechera Perro Mediano", 38.0, 15, 4, "Arnés de pechera cómodo para paseos."),
                 new ProdDef("P045", "Cama Ortopédica Mediana Antideslizante", 89.0, 10, 3, "Cama ortopédica con base antideslizante."),
                 new ProdDef("P046", "Manta de Felpa Suave 90x60", 34.0, 20, 5, "Manta de felpa para mascotas."),
-                new ProdDef("P047", "Colchón Suave para Perro y Gato", 65.0, 12, 3, "Colchón mullido de espuma.")
+                new ProdDef("P047", "Colchón Suave para Perro y Gato", 65.0, 12, 3, "Colchón mullido de espuma."),
+                new ProdDef("P048", "Naproxeno Suspensión Oral 100ml", 35.0, 6, 3, "Antiinflamatorio y analgésico no esteroideo para caninos."),
+                new ProdDef("P049", "Paracetamol Gotas Veterinario 30ml", 22.0, 15, 5, "Antipirético y analgésico veterinario en gotas.")
         );
 
         Map<String, Categoria> categoriasCache = new HashMap<>();
