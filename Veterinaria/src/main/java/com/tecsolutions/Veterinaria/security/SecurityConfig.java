@@ -88,6 +88,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/recuperar-password").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/reset-password").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/productos").permitAll()
+                .requestMatchers("/dashboard/**", "/dashboard", "/dashboard-critico/**", "/dashboard-critico").permitAll()
                 .requestMatchers(HttpMethod.GET, "/").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/api/usuarios/**").hasAnyRole("Administrador", "ADMIN")
