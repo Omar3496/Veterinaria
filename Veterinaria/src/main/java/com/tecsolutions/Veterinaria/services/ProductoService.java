@@ -17,6 +17,10 @@ import com.tecsolutions.Veterinaria.repository.MovimientoStockRepository;
 import com.tecsolutions.Veterinaria.repository.ProductoRepository;
 import com.tecsolutions.Veterinaria.repository.ProveedorRepository;
 import com.tecsolutions.Veterinaria.repository.StockAlmacenRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +81,13 @@ public class ProductoService {
             }
         }
         return new NextSkuResponseDTO(String.valueOf(maxSku + 1));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductoDTO> listarProductosPaginado(int pagina, int tamano, String ordenarPor) {
+        Pageable configuracionPagina = PageRequest.of(pagina, tamano, Sort.by(ordenarPor).ascending());
+        Page<Producto> resultado = productoRepository.findAll(configuracionPagina);
+        return resultado.map(productoMapper::toDTO);
     }
 
     @Transactional(readOnly = true)

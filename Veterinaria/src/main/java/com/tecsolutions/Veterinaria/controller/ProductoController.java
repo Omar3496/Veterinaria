@@ -5,6 +5,7 @@ import com.tecsolutions.Veterinaria.dto.NextSkuResponseDTO;
 import com.tecsolutions.Veterinaria.dto.ProductoDTO;
 import com.tecsolutions.Veterinaria.model.Usuario;
 import com.tecsolutions.Veterinaria.services.ProductoService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +29,14 @@ public class ProductoController {
             @RequestParam(defaultValue = "0") int skip,
             @RequestParam(defaultValue = "100") int limit) {
         return ResponseEntity.ok(productoService.listarProductos(skip, limit));
+    }
+
+    @GetMapping("/listar-paginado")
+    public ResponseEntity<Page<ProductoDTO>> listarProductosPaginado(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamano,
+            @RequestParam(defaultValue = "nombre") String ordenarPor) {
+        return ResponseEntity.ok(productoService.listarProductosPaginado(pagina, tamano, ordenarPor));
     }
 
     @GetMapping("/{id}")
